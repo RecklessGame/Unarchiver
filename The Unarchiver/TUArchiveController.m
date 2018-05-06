@@ -17,7 +17,6 @@ NSStringEncoding globalpasswordencoding=0;
 
 +(void)clearGlobalPassword
 {
-	[globalpassword release];
 	globalpassword=nil;
 	globalpasswordencoding=0;
 }
@@ -30,14 +29,14 @@ NSStringEncoding globalpasswordencoding=0;
 		docktile=nil;
 		unarchiver=nil;
 
-		archivename=[filename retain];
+		archivename=filename;
 		destination=nil;
 		tmpdest=nil;
 
 		selected_encoding=0;
 
 		finishtarget=nil;
-		finishselector=NULL;
+		finishselector=nil;
 
 		foldermodeoverride=copydateoverride=changefilesoverride=-1;
 		deletearchiveoverride=openextractedoverride=-1;
@@ -55,19 +54,17 @@ NSStringEncoding globalpasswordencoding=0;
 
 -(void)dealloc
 {
-	[view release];
-	[docktile release];
-	[unarchiver release];
-	[archivename release];
-	[destination release];
-	[tmpdest release];
+    view = nil;
+    docktile = nil;
+    unarchiver = nil;
+    archivename = nil;
+    destination = nil;
+    tmpdest = nil;
 
-	#ifndef IsLegacyVersion
-	[scopedurl stopAccessingSecurityScopedResource];
-	[scopedurl release];
-	#endif
-
-	[super dealloc];
+#ifndef IsLegacyVersion
+    [scopedurl stopAccessingSecurityScopedResource];
+    scopedurl = nil;
+#endif
 }
 
 
@@ -76,24 +73,21 @@ NSStringEncoding globalpasswordencoding=0;
 
 -(void)setTaskView:(TUArchiveTaskView *)taskview
 {
-	[view autorelease];
-	view=[taskview retain];
+    view = taskview;
 }
 
 -(TUDockTileView *)dockTileView { return docktile; }
 
 -(void)setDockTileView:(TUDockTileView *)tileview
 {
-	[docktile autorelease];
-	docktile=[tileview retain];
+    docktile = tileview;
 }
 
 -(NSString *)destination { return destination; }
 
 -(void)setDestination:(NSString *)newdestination
 {
-	[destination autorelease];
-	destination=[newdestination retain];
+    destination = newdestination;
 }
 
 -(int)folderCreationMode
@@ -146,9 +140,7 @@ NSStringEncoding globalpasswordencoding=0;
 -(void)useSecurityScopedURL:(NSURL *)url
 {
 	[scopedurl stopAccessingSecurityScopedResource];
-	[scopedurl autorelease];
-
-	scopedurl=[url retain];
+	scopedurl = url;
 	[scopedurl startAccessingSecurityScopedResource];
 }
 #endif
@@ -206,15 +198,13 @@ NSStringEncoding globalpasswordencoding=0;
 
 -(void)prepare
 {
-	[unarchiver release];
-	unarchiver=[[XADSimpleUnarchiver simpleUnarchiverForPath:archivename error:NULL] retain];
+	unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:archivename error:NULL];
 }
 
 -(void)runWithFinishAction:(SEL)selector target:(id)target
 {
 	finishtarget=target;
 	finishselector=selector;
-	[self retain];
 
 	[view setCancelAction:@selector(archiveTaskViewCancelled:) target:self];
 
@@ -222,16 +212,16 @@ NSStringEncoding globalpasswordencoding=0;
 
 	static int tmpcounter=0;
 	NSString *tmpdir=[NSString stringWithFormat:@".TheUnarchiverTemp%d",tmpcounter++];
-	tmpdest=[[destination stringByAppendingPathComponent:tmpdir] retain];
+	tmpdest=[destination stringByAppendingPathComponent:tmpdir];
 
 	[NSThread detachNewThreadSelector:@selector(extractThreadEntry) toTarget:self withObject:nil];
 }
 
 -(void)extractThreadEntry
 {
-	NSAutoreleasePool *pool=[[NSAutoreleasePool alloc] init];
-	[self extract];
-	[pool release];
+    @autoreleasepool {
+        [self extract];
+    }
 }
 
 -(void)extract
@@ -397,8 +387,11 @@ NSStringEncoding globalpasswordencoding=0;
 	}
 
 	[docktile hideProgress];
-	[finishtarget performSelector:finishselector withObject:self];
-	[self release];
+    if (finishtarget && finishselector && [finishtarget respondsToSelector:finishselector]) {
+        [finishtarget performSelector:finishselector withObject:self];
+    }
+#warning 'Need recodeing here about calls self release selector'
+    //[self release];
 }
 
 -(void)extractFailed
@@ -408,8 +401,11 @@ NSStringEncoding globalpasswordencoding=0;
 	[self forgetTempDirectory:tmpdest];
 
 	[docktile hideProgress];
-	[finishtarget performSelector:finishselector withObject:self];
-	[self release];
+    if (finishtarget && finishselector && [finishtarget respondsToSelector:finishselector]) {
+        [finishtarget performSelector:finishselector withObject:self];
+    }
+#warning 'Need recodeing here about calls self release selector'
+	//[self release];
 }
 
 -(void)rememberTempDirectory:(NSString *)tmpdir
@@ -505,7 +501,7 @@ NSStringEncoding globalpasswordencoding=0;
 
 			if(applytoall)
 			{
-				globalpassword=[password retain];
+				globalpassword=password;
 				globalpasswordencoding=encoding;
 			}
 		}

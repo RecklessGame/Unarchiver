@@ -212,7 +212,7 @@ enum extracionDestination {
 -(void)unarchiveFile:(NSString *)fileName
 {
 	if([appController archiveControllerForFilename:fileName]) return;
-	TUArchiveController *archiveController=[[[TUArchiveController alloc] initWithFilename:fileName] autorelease];
+	TUArchiveController *archiveController=[[TUArchiveController alloc] initWithFilename:fileName];
 	NSString *destination;
 	switch (desttype) {
 		default:

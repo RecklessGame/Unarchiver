@@ -47,18 +47,16 @@ static BOOL IsPathWritable(NSString *path);
 
 -(void)dealloc
 {
-	[setuptasks release];
-	[extracttasks release];
-	[archivecontrollers release];
-	[selecteddestination release];
+    setuptasks = nil;
+    extracttasks = nil;
+    archivecontrollers = nil;
+    selecteddestination = nil;
 
 	if(docktile)
 	{
 		[[NSApp dockTile] setContentView:nil];
-		[docktile release];
+        docktile = nil;
 	}
-
-	[super dealloc];
 }
 
 -(void)awakeFromNib
@@ -218,7 +216,7 @@ static BOOL IsPathWritable(NSString *path);
 	// Check if this file is already included in any of the currently queued archives.
 	if([self archiveControllerForFilename:filename]) return;
 
-	TUArchiveController *archive=[[[TUArchiveController alloc] initWithFilename:filename] autorelease];
+	TUArchiveController *archive=[[TUArchiveController alloc] initWithFilename:filename];
 	[archive setDestination:[self destinationForFilename:filename type:desttype]];
 	[self addArchiveController:archive];
 }
@@ -242,7 +240,7 @@ static BOOL IsPathWritable(NSString *path);
 -(void)addArchiveController:(TUArchiveController *)archive
 {
 	// Create status view and archive controller.
-	TUArchiveTaskView *taskview=[[TUArchiveTaskView new] autorelease];
+	TUArchiveTaskView *taskview=[TUArchiveTaskView new];
 
 	[taskview setCancelAction:@selector(archiveTaskViewCancelledBeforeSetup:) target:self];
 	[taskview setArchiveController:archive];
@@ -380,7 +378,7 @@ static BOOL IsPathWritable(NSString *path);
 			{
 				NSOpenPanel *panel=[NSOpenPanel openPanel];
 
-				NSTextField *text=[[[NSTextField alloc] initWithFrame:NSMakeRect(0,0,100,100)] autorelease];
+				NSTextField *text=[[NSTextField alloc] initWithFrame:NSMakeRect(0,0,100,100)];
 
 				[text setStringValue:NSLocalizedString(
 				@"The Unarchiver does not have permission to write to this folder. "
@@ -420,21 +418,21 @@ static BOOL IsPathWritable(NSString *path);
 	[self prepareArchiveController:archive];
 }
 
--(void)archiveDestinationPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)res contextInfo:(void  *)info
+-(void)archiveDestinationPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)res contextInfo:(id)info
 {
 	TUArchiveController *archive=(id)info;
 
 	if(res==NSOKButton)
 	{
-		[selecteddestination release];
+        selecteddestination = nil;
 
-		#ifdef IsLegacyVersion
-		selecteddestination=[[panel directory] retain];
-		#else
-		NSURL *url=[panel URL];
-		[[CSURLCache defaultCache] cacheSecurityScopedURL:url];
-		selecteddestination=[[url path] retain];
-		#endif
+#ifdef IsLegacyVersion
+        selecteddestination=[[panel directory] retain];
+#else
+        NSURL *url=[panel URL];
+        [[CSURLCache defaultCache] cacheSecurityScopedURL:url];
+        selecteddestination=[url path];
+#endif
 
 		[[NSUserDefaults standardUserDefaults] setObject:selecteddestination forKey:@"lastDestination"];
 
@@ -510,7 +508,7 @@ static BOOL IsPathWritable(NSString *path);
 			// No access available in the cache. Nag the user.
 			NSOpenPanel *panel=[NSOpenPanel openPanel];
 
-			NSTextField *text=[[[NSTextField alloc] initWithFrame:NSMakeRect(0,0,100,100)] autorelease];
+			NSTextField *text=[[NSTextField alloc] initWithFrame:NSMakeRect(0,0,100,100)];
 
 			[text setStringValue:NSLocalizedString(
 			@"The Unarchiver needs to search for more parts of this archive, "
@@ -581,8 +579,6 @@ static BOOL IsPathWritable(NSString *path);
 		if([mainwindow isMiniaturized]) [mainwindow close];
 		else [mainwindow orderOut:nil];
 	}
-
-	[selecteddestination release];
 	selecteddestination=nil;
 }
 
@@ -816,8 +812,8 @@ userData:(NSString *)data error:(NSString **)error
 {
 	NSString *usernameregex=[NSUserName() escapedPattern];
 
-	#define regexForUserPath(path) [NSString stringWithFormat:@"/%@/%@$",usernameregex,path,nil]
-	#define folderIconNamed(iconName) [[[NSImage alloc] initWithContentsOfFile:@"/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/" iconName] autorelease]
+	#define regexForUserPath(path)      [NSString stringWithFormat:@"/%@/%@$",usernameregex,path,nil]
+	#define folderIconNamed(iconName)   [[NSImage alloc] initWithContentsOfFile:@"/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/" iconName]
 
 	NSImage *icon=nil;
 

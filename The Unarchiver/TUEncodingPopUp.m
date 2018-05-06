@@ -37,7 +37,6 @@ static BOOL SanityCheckString(NSString *string);
 	[item setTitle:NSLocalizedString(@"Detect automatically",@"Option in the encoding pop-up to detect the encoding automatically")];
 	[item setTag:0];
 	[[self menu] addItem:item];
-	[item release];
 }
 
 -(void)buildEncodingListWithDefaultEncoding
@@ -50,7 +49,6 @@ static BOOL SanityCheckString(NSString *string);
 	[item setTitle:NSLocalizedString(@"Default encoding",@"Option in the password encoding pop-up to use the default encoding")];
 	[item setTag:0];
 	[[self menu] insertItem:item atIndex:0];
-	[item release];
 }
 
 -(void)buildEncodingListMatchingXADString:(id <XADString>)string
@@ -69,9 +67,9 @@ static BOOL SanityCheckString(NSString *string);
 
 		float maxwidth=[[self class] maximumEncodingNameWidthWithAttributes:normalattrs];
 
-		NSMutableParagraphStyle *parastyle=[[NSMutableParagraphStyle new] autorelease];
+		NSMutableParagraphStyle *parastyle=[NSMutableParagraphStyle new];
 		[parastyle setTabStops:[NSArray arrayWithObjects:
-			[[[NSTextTab alloc] initWithType:NSLeftTabStopType location:maxwidth+10] autorelease],
+			[[NSTextTab alloc] initWithType:NSLeftTabStopType location:maxwidth+10],
 		nil]];
 
 		[normalattrs setObject:parastyle forKey:NSParagraphStyleAttributeName];
@@ -88,16 +86,16 @@ static BOOL SanityCheckString(NSString *string);
 		if(string && ![string canDecodeWithEncoding:encoding]) continue;
 
 		NSString *encodingname=[encdict objectForKey:@"Name"];
-		NSMenuItem *item=[[NSMenuItem new] autorelease];
+        NSMenuItem *item=[NSMenuItem new];
 
 		if(string)
 		{
 			NSString *decoded=[string stringWithEncoding:encoding];
 			if(!SanityCheckString(decoded)) continue;
 
-			NSMutableAttributedString *attrstr=[[[NSMutableAttributedString alloc]
+			NSMutableAttributedString *attrstr=[[NSMutableAttributedString alloc]
 			initWithString:[NSString stringWithFormat:@"%@\t%C %@",encodingname,(unichar)0x27a4,decoded]
-			attributes:normalattrs] autorelease];
+			attributes:normalattrs];
 
 			[attrstr setAttributes:smallattrs range:NSMakeRange([encodingname length],[decoded length]+3)];
 

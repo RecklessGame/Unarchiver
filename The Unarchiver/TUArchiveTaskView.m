@@ -25,17 +25,15 @@
 
 -(void)dealloc
 {
-	[pauselock release];
+    pauselock = nil;
 
-	[waitview release];
-	[progressview release];
-	[notwritableview release];
-	[errorview release];
-	[openerrorview release];
-	[passwordview release];
-	[encodingview release];
-
-	[super dealloc];
+    waitview = nil;
+    progressview = nil;
+    notwritableview = nil;
+    errorview = nil;
+    openerrorview = nil;
+    passwordview = nil;
+    encodingview = nil;
 }
 
 -(TUArchiveController *)archiveController { return archive; }
@@ -153,8 +151,8 @@
 {
 	if(!waitview)
 	{
-		NSNib *nib=[[[NSNib alloc] initWithNibNamed:@"WaitView" bundle:nil] autorelease];
-		[nib instantiateNibWithOwner:self topLevelObjects:nil];
+        NSNib *nib=[[NSNib alloc] initWithNibNamed:@"WaitView" bundle:nil];
+		[nib instantiateWithOwner:self topLevelObjects:nil];
 	}
 
 	[self updateWaitView];
@@ -186,8 +184,8 @@
 {
 	if(!progressview)
 	{
-		NSNib *nib=[[[NSNib alloc] initWithNibNamed:@"ProgressView" bundle:nil] autorelease];
-		[nib instantiateNibWithOwner:self topLevelObjects:nil];
+		NSNib *nib=[[NSNib alloc] initWithNibNamed:@"ProgressView" bundle:nil];
+		[nib instantiateWithOwner:self topLevelObjects:nil];
 	}
 
 	[actionfield setStringValue:[NSString stringWithFormat:
@@ -210,8 +208,8 @@
 {
 	if(!notwritableview)
 	{
-		NSNib *nib=[[[NSNib alloc] initWithNibNamed:@"NotWritableView" bundle:nil] autorelease];
-		[nib instantiateNibWithOwner:self topLevelObjects:nil];
+		NSNib *nib=[[NSNib alloc] initWithNibNamed:@"NotWritableView" bundle:nil];
+		[nib instantiateWithOwner:self topLevelObjects:nil];
 	}
 
 	[self setDisplayedView:notwritableview];
@@ -222,8 +220,8 @@
 {
 	if(!errorview)
 	{
-		NSNib *nib=[[[NSNib alloc] initWithNibNamed:@"ErrorView" bundle:nil] autorelease];
-		[nib instantiateNibWithOwner:self topLevelObjects:nil];
+		NSNib *nib=[[NSNib alloc] initWithNibNamed:@"ErrorView" bundle:nil];
+		[nib instantiateWithOwner:self topLevelObjects:nil];
 	}
 
 	[errorfield setStringValue:error];
@@ -235,8 +233,8 @@
 {
 	if(!openerrorview)
 	{
-		NSNib *nib=[[[NSNib alloc] initWithNibNamed:@"OpenErrorView" bundle:nil] autorelease];
-		[nib instantiateNibWithOwner:self topLevelObjects:nil];
+		NSNib *nib=[[NSNib alloc] initWithNibNamed:@"OpenErrorView" bundle:nil];
+		[nib instantiateWithOwner:self topLevelObjects:nil];
 	}
 
 	[openerrorfield setStringValue:error];
@@ -248,8 +246,8 @@
 {
 	if(!passwordview)
 	{
-		NSNib *nib=[[[NSNib alloc] initWithNibNamed:@"PasswordView" bundle:nil] autorelease];
-		[nib instantiateNibWithOwner:self topLevelObjects:nil];
+		NSNib *nib=[[NSNib alloc] initWithNibNamed:@"PasswordView" bundle:nil];
+		[nib instantiateWithOwner:self topLevelObjects:nil];
 	}
 
 	[passwordmessagefield setStringValue:[NSString stringWithFormat:
@@ -290,8 +288,8 @@
 
 	if(!encodingview)
 	{
-		NSNib *nib=[[[NSNib alloc] initWithNibNamed:@"EncodingView" bundle:nil] autorelease];
-		[nib instantiateNibWithOwner:self topLevelObjects:nil];
+		NSNib *nib=[[NSNib alloc] initWithNibNamed:@"EncodingView" bundle:nil];
+		[nib instantiateWithOwner:self topLevelObjects:nil];
 	}
 
 	NSImage *icon=[[NSWorkspace sharedWorkspace] iconForFile:[archive filename]];
@@ -335,13 +333,17 @@
 -(IBAction)cancelWait:(id)sender
 {
 	[sender setEnabled:NO];
-	[canceltarget performSelector:cancelselector withObject:self];
+    if (canceltarget && cancelselector && [canceltarget respondsToSelector:cancelselector]) {
+        [canceltarget performSelector:cancelselector withObject:self];
+    }
 }
 
 -(IBAction)cancelExtraction:(id)sender
 {
 	[sender setEnabled:NO];
-	[canceltarget performSelector:cancelselector withObject:self];
+    if (canceltarget && cancelselector && [canceltarget respondsToSelector:cancelselector]) {
+        [canceltarget performSelector:cancelselector withObject:self];
+    }
 }
 
 -(IBAction)stopAfterNotWritable:(id)sender

@@ -20,7 +20,7 @@ static BOOL HasPathPrefix(NSString *path,NSString *prefix);
 {
 	if((self=[super init]))
 	{
-		providers=(NSMutableArray *)CFArrayCreateMutable(NULL,0,&(const CFArrayCallBacks){0,NULL,NULL,NULL,NULL});
+		providers=(__bridge NSMutableArray *)CFArrayCreateMutable(NULL,0,&(const CFArrayCallBacks){0,NULL,NULL,NULL,NULL});
 		cachedurls=[NSMutableDictionary new];
 		cachedbookmarks=[NSMutableDictionary new];
 
@@ -34,10 +34,9 @@ static BOOL HasPathPrefix(NSString *path,NSString *prefix);
 
 -(void)dealloc
 {
-	[providers release];
-	[cachedurls release];
-	[cachedbookmarks release];
-	[super dealloc];
+    providers = nil;
+	cachedurls = nil;
+    cachedbookmarks = nil;
 }
 
 -(void)addURLProvider:(NSObject <CSURLCacheProvider> *)provider

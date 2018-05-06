@@ -61,7 +61,7 @@
 -(void)checkDestinationForArchiveController:(TUArchiveController *)archive;
 -(void)checkDestinationForArchiveControllerAgain:(TUArchiveController *)archive;
 -(void)checkDestinationForArchiveController:(TUArchiveController *)archive secondAttempt:(BOOL)secondattempt;
--(void)archiveDestinationPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)res contextInfo:(void  *)info;
+-(void)archiveDestinationPanelDidEnd:(NSOpenPanel *)panel returnCode:(int)res contextInfo:(id)info;
 -(void)archiveTaskView:(TUArchiveTaskView *)taskview notWritableResponse:(int)response;
 -(void)prepareArchiveController:(TUArchiveController *)archive;
 -(void)finishSetupForArchiveController:(TUArchiveController *)archive;

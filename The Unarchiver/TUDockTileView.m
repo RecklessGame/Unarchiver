@@ -16,7 +16,6 @@
 
 -(void)dealloc
 {
-	[super dealloc];
 }
 
 -(void)setCount:(int)count
@@ -75,12 +74,12 @@
 	if(progressrect.size.width==0) return;
 
 	NSBezierPath *progresspath=[NSBezierPath bezierPathWithRoundedRect:progressrect xRadius:7 yRadius:7];
-	NSGradient *gradient=[[[NSGradient alloc] initWithColorsAndLocations:
-		[NSColor colorWithColorSpace:[NSColorSpace sRGBColorSpace] components:(CGFloat[4]){ 0.25,0.57,0.85,1 } count:4],(CGFloat)0,
-		[NSColor colorWithColorSpace:[NSColorSpace sRGBColorSpace] components:(CGFloat[4]){ 0.20,0.47,0.74,1 } count:4],(CGFloat)0.49,
-		[NSColor colorWithColorSpace:[NSColorSpace sRGBColorSpace] components:(CGFloat[4]){ 0.17,0.42,0.68,1 } count:4],(CGFloat)0.51,
-		[NSColor colorWithColorSpace:[NSColorSpace sRGBColorSpace] components:(CGFloat[4]){ 0.17,0.39,0.64,1 } count:4],(CGFloat)1,
-	nil] autorelease];
+    NSGradient *gradient=[[NSGradient alloc] initWithColorsAndLocations:
+                          [NSColor colorWithColorSpace:[NSColorSpace sRGBColorSpace] components:(CGFloat[4]){ 0.25,0.57,0.85,1 } count:4],(CGFloat)0,
+                          [NSColor colorWithColorSpace:[NSColorSpace sRGBColorSpace] components:(CGFloat[4]){ 0.20,0.47,0.74,1 } count:4],(CGFloat)0.49,
+                          [NSColor colorWithColorSpace:[NSColorSpace sRGBColorSpace] components:(CGFloat[4]){ 0.17,0.42,0.68,1 } count:4],(CGFloat)0.51,
+                          [NSColor colorWithColorSpace:[NSColorSpace sRGBColorSpace] components:(CGFloat[4]){ 0.17,0.39,0.64,1 } count:4],(CGFloat)1,
+                          nil];
 
 	[gradient drawInBezierPath:progresspath angle:-90];
 }

@@ -16,8 +16,7 @@
 
 -(void)dealloc
 {
-	[resizetarget release];
-	[super dealloc];
+    resizetarget = nil;
 }
 
 -(void)addTaskView:(TUTaskView *)taskview
@@ -80,7 +79,9 @@
 
 	if(oldheight!=totalheight)
 	{
-		[resizetarget performSelector:resizeaction withObject:self];
+        if (resizetarget && resizeaction && [resizetarget respondsToSelector:resizeaction]) {
+            [resizetarget performSelector:resizeaction withObject:self];
+        }
 	}
 
 //	float newheight=y;
@@ -115,9 +116,8 @@
 
 -(void)setResizeAction:(SEL)action target:(id)target
 {
-	resizeaction=action;
-	[resizetarget autorelease];
-	resizetarget=[target retain];
+	resizeaction = action;
+    resizetarget = target;
 }
 
 -(NSSize)preferredSize

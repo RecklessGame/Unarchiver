@@ -7,9 +7,9 @@
 {
 	if((self=[super initWithCoder:coder]))
 	{
-		normal=[[NSImage imageNamed:@"close_normal"] retain];
-		hover=[[NSImage imageNamed:@"close_hover"] retain];
-		press=[[NSImage imageNamed:@"close_press"] retain];
+        normal = [NSImage imageNamed:@"close_normal"];
+		hover = [NSImage imageNamed:@"close_hover"];
+		press = [NSImage imageNamed:@"close_press"];
 		[self setImage:normal];
 		[self setAlternateImage:press];
 		[self setShowsBorderOnlyWhileMouseInside:YES];
@@ -20,11 +20,9 @@
 
 -(void)dealloc
 {
-	[normal release];
-	[hover release];
-	[press release];
-
-	[super dealloc];
+    normal = nil;
+    hover = nil;
+    press = nil;
 }
 
 

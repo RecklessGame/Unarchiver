@@ -17,8 +17,7 @@
 
 -(void)dealloc
 {
-	[tasks release];
-	[super dealloc];
+    tasks = nil;
 }
 
 -(void)setFinishAction:(SEL)selector target:(id)target
@@ -29,7 +28,7 @@
 
 -(id)taskWithTarget:(id)target
 {
-	return [[[TUTaskTrampoline alloc] initWithTarget:target queue:self] autorelease];
+	return [[TUTaskTrampoline alloc] initWithTarget:target queue:self];
 }
 
 -(void)newTaskWithTarget:(id)target invocation:(NSInvocation *)invocation
@@ -81,7 +80,9 @@
 	if(running) return;
 	if(![tasks count])
 	{
-		[finishtarget performSelector:finishselector withObject:self];
+        if (finishtarget && finishselector && [finishtarget respondsToSelector:finishselector]) {
+            [finishtarget performSelector:finishselector withObject:self];
+        }
 		return;
 	}
 
@@ -95,10 +96,7 @@
 {
 	id target=[tasks objectAtIndex:0];
 	NSInvocation *invocation=[tasks objectAtIndex:1];
-
-	[invocation retain];
 	[invocation invokeWithTarget:target];
-	[invocation release];
 }
 
 @end
@@ -115,7 +113,6 @@
 
 -(void)dealloc
 {
-	[super dealloc];
 }
 
 
