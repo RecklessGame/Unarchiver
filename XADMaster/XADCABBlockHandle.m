@@ -15,7 +15,7 @@
 -(void)dealloc
 {
 	[blocks release];
-	[super dealloc];
+	
 }
 
 -(void)resetBlockStream

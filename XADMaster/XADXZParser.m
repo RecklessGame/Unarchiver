@@ -44,7 +44,7 @@
 {
 	CSHandle *handle=[self handle];
 	[handle seekToFileOffset:0];
-	return [[[XADXZHandle alloc] initWithHandle:handle] autorelease];
+	return [[XADXZHandle alloc] initWithHandle:handle];
 }
 
 -(NSString *)formatName { return @"XZ"; }

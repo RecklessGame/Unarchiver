@@ -37,7 +37,7 @@ static ISzAlloc allocator={Alloc,Free};
 	Lzma2Dec_Free(&lzma,&allocator);
 
 	[parent release];
-	[super dealloc];
+	
 
 }
 

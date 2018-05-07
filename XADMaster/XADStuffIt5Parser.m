@@ -394,7 +394,7 @@ static NSData *StuffItMD5(NSData *data);
 	NSData *key=[self keyForEntryWithDictionary:dict];
 	if(key)
 	{
-		return [[[XADRC4Handle alloc] initWithHandle:fh key:key] autorelease];
+		return [[XADRC4Handle alloc] initWithHandle:fh key:key];
 	}
 	else
 	{

@@ -396,17 +396,17 @@
 			int m2=[handle readUInt8]^xor;
 			int flags=[handle readUInt8]^xor;
 
-			handle=[[[XADCompressHandle alloc] initWithHandle:handle
-			length:size flags:flags] autorelease];
+            handle=[[XADCompressHandle alloc] initWithHandle:handle
+                                                      length:size flags:flags];
 
-			if(xor) handle=[[[XADXORHandle alloc] initWithHandle:handle
-			password:[NSData dataWithBytes:(uint8_t[]){xor} length:1]] autorelease];
+            if(xor) handle=[[XADXORHandle alloc] initWithHandle:handle
+                                                       password:[NSData dataWithBytes:(uint8_t[]){xor} length:1]];
 
 			if(checksum)
 			{
-				handle=[[[XADChecksumHandle alloc] initWithHandle:handle length:size
-				correctChecksum:correctchecksum-m1-m2-flags
-				mask:0xffff] autorelease];
+                handle=[[XADChecksumHandle alloc] initWithHandle:handle length:size
+                                                 correctChecksum:correctchecksum-m1-m2-flags
+                                                            mask:0xffff];
 			}
 		}
 		break;
@@ -431,16 +431,14 @@
 				numtrees=256;
 			}
 
-			handle=[[[XADDiskDoublerMethod2Handle alloc]
-			initWithHandle:handle length:size numberOfTrees:numtrees] autorelease];
+            handle=[[XADDiskDoublerMethod2Handle alloc] initWithHandle:handle length:size numberOfTrees:numtrees];
 
-			if(xor) handle=[[[XADXORHandle alloc] initWithHandle:handle
-			password:[NSData dataWithBytes:(uint8_t[]){xor} length:1]] autorelease];
-
-			if(checksum)
-			{
-				handle=[[[XADChecksumHandle alloc] initWithHandle:handle length:size
-				correctChecksum:correctchecksum mask:0xffff] autorelease];
+            if(xor) {
+                handle=[[XADXORHandle alloc] initWithHandle:handle password:[NSData dataWithBytes:(uint8_t[]){xor} length:1]];
+            }
+			if(checksum) {
+                handle=[[XADChecksumHandle alloc] initWithHandle:handle length:size
+                                                 correctChecksum:correctchecksum mask:0xffff];
 			}
 		}
 		break;
@@ -452,16 +450,16 @@
 			int xor=0;
 			if(info1>=0x2a&&(info2&0x80)==0) xor=0x5a;
 
-			handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:handle
-			length:size] autorelease];
+            handle=[[XADStuffItHuffmanHandle alloc] initWithHandle:handle
+                                                            length:size];
 
-			if(xor) handle=[[[XADXORHandle alloc] initWithHandle:handle
-			password:[NSData dataWithBytes:(uint8_t[]){xor}length:1]] autorelease];
+            if(xor) handle=[[XADXORHandle alloc] initWithHandle:handle
+                                                       password:[NSData dataWithBytes:(uint8_t[]){xor}length:1]];
 
 			if(checksum)
 			{
-				handle=[[[XADChecksumHandle alloc] initWithHandle:handle length:size
-				correctChecksum:correctchecksum mask:0xffff] autorelease];
+                handle=[[XADChecksumHandle alloc] initWithHandle:handle length:size
+                                                 correctChecksum:correctchecksum mask:0xffff];
 			}
 		}
 		break;
@@ -473,20 +471,20 @@
 
 			[handle skipBytes:8+2*numentries];
 
-			handle=[[[XADXORHandle alloc] initWithHandle:handle
-			password:[NSData dataWithBytes:(uint8_t[]){0xff} length:1]] autorelease];
+            handle=[[XADXORHandle alloc] initWithHandle:handle
+                                               password:[NSData dataWithBytes:(uint8_t[]){0xff} length:1]];
 
-			handle=[[[XADStacLZSHandle alloc] initWithHandle:handle
-			length:size] autorelease];
+            handle=[[XADStacLZSHandle alloc] initWithHandle:handle
+                                                     length:size];
 
-			handle=[[[XADXORHandle alloc] initWithHandle:handle
-			password:[NSData dataWithBytes:(uint8_t[]){0xff} length:1]] autorelease];
+            handle=[[XADXORHandle alloc] initWithHandle:handle
+                                               password:[NSData dataWithBytes:(uint8_t[]){0xff} length:1]];
 
 			if(checksum)
 			{
 				if((size&1)==0) correctchecksum^=0xff;
-				handle=[[[XADXORSumHandle alloc] initWithHandle:handle length:size
-				correctChecksum:correctchecksum] autorelease];
+                handle=[[XADXORSumHandle alloc] initWithHandle:handle length:size
+                                               correctChecksum:correctchecksum];
 			}
 		}
 		break;
@@ -496,16 +494,16 @@
 			int sub=0;
 			for(int i=0;i<16;i++) sub+=[handle readUInt8];
 
-			if(sub==0) handle=[[[XADCompactProLZHHandle alloc]
-			initWithHandle:handle blockSize:0xfff0] autorelease];
+            if(sub==0) handle=[[XADCompactProLZHHandle alloc]
+                               initWithHandle:handle blockSize:0xfff0];
 
-			handle=[[[XADCompactProRLEHandle alloc] initWithHandle:handle
-			length:size] autorelease];
+            handle=[[XADCompactProRLEHandle alloc] initWithHandle:handle
+                                                           length:size];
 
 			if(checksum)
 			{
-				handle=[XADCRCHandle IBMCRC16HandleWithHandle:handle length:size
-				correctCRC:correctchecksum conditioned:NO];
+                handle=[XADCRCHandle IBMCRC16HandleWithHandle:handle length:size
+                                                   correctCRC:correctchecksum conditioned:NO];
 			}
 		}
 		break;
@@ -513,13 +511,13 @@
 		case 6:
 		case 9: // DiskDoubler AD
 		{
-			handle=[[[XADDiskDoublerADnHandle alloc] initWithHandle:handle length:size] autorelease];
+			handle=[[XADDiskDoublerADnHandle alloc] initWithHandle:handle length:size];
 		}
 		break;
 
 		case 10: // DiskDoubler DD
 		{
-			handle=[[[XADDiskDoublerDDnHandle alloc] initWithHandle:handle length:size] autorelease];
+			handle=[[XADDiskDoublerDDnHandle alloc] initWithHandle:handle length:size];
 		}
 		break;
 
@@ -534,7 +532,7 @@
 		case 0: break; // No delta processing
 
 		case 1:
-			handle=[[[XADDeltaHandle alloc] initWithHandle:handle length:size] autorelease];
+			handle=[[XADDeltaHandle alloc] initWithHandle:handle length:size];
 		break;
 
 		default:

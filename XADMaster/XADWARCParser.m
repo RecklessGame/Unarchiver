@@ -27,7 +27,7 @@
 	NSMutableDictionary *lastrecord=nil;
 	while(![fh atEndOfFile])
 	{
-		NSAutoreleasePool *pool=[NSAutoreleasePool new];
+        @autoreleasepool {
 
 		NSString *marker=[fh readLineWithEncoding:NSUTF8StringEncoding];
 		if(![marker isEqual:@"WARC/1.0"])
@@ -77,7 +77,7 @@
 
 		[fh seekToFileOffset:endofrecord+4];
 
-		[pool release];
+        } // autorelease pool
 	}
 
 	// Find all response records with 200 status, and build a

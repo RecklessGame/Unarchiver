@@ -134,7 +134,7 @@
 
 -(void)dealloc
 {
-	[super dealloc];
+	
 }
 
 -(void)resetBlockStream

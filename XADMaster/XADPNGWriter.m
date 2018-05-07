@@ -22,7 +22,7 @@
 	if(streaminited) deflateEnd(&zs);
 
 	[data release];
-	[super dealloc];
+	
 }
 
 -(NSData *)data { return data; }

@@ -61,7 +61,7 @@
 -(void)dealloc
 {
 	CSInputBufferFree(input);
-	[super dealloc];
+	
 }
 
 

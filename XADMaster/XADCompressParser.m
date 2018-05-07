@@ -42,8 +42,8 @@
 
 -(CSHandle *)handleForEntryWithDictionary:(NSDictionary *)dict wantChecksum:(BOOL)checksum
 {
-	return [[[XADCompressHandle alloc] initWithHandle:[self handleAtDataOffsetForDictionary:dict]
-	flags:[[dict objectForKey:@"CompressFlags"] intValue]] autorelease];
+    return [[XADCompressHandle alloc] initWithHandle:[self handleAtDataOffsetForDictionary:dict]
+                                               flags:[[dict objectForKey:@"CompressFlags"] intValue]];
 }
 
 -(NSString *)formatName { return @"Compress"; }

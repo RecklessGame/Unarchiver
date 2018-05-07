@@ -87,7 +87,7 @@ static const char PDFPasswordPadding[32]=
 	[password release];
 	[keys release];
 	[algorithms release];
-	[super dealloc];
+	
 }
 
 -(BOOL)needsPassword { return needspassword; }

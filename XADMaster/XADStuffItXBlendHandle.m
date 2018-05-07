@@ -20,7 +20,7 @@
 {
 	[parent release];
 	[currhandle release];
-	[super dealloc];
+	
 }
 
 -(void)resetStream

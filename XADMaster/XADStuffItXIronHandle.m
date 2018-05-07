@@ -47,7 +47,7 @@ static int NextBitWithDoubleWeights(CarrylessRangeCoder *coder,uint32_t *weight1
 -(void)dealloc
 {
 	free(block);
-	[super dealloc];
+	
 }
 
 -(void)resetBlockStream

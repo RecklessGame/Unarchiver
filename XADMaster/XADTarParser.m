@@ -67,7 +67,6 @@
 {
 	NSString *readString = [[NSString alloc] initWithUTF8String:buffer];
 	NSScanner* scanner = [NSScanner scannerWithString:readString];
-	[readString release];
 	double returnValue;
 	if([scanner scanDouble:&returnValue] == YES) {
 		return( returnValue );
@@ -79,7 +78,6 @@
 {
 	NSString *readString = [[NSString alloc] initWithUTF8String:buffer];
 	NSScanner* scanner = [NSScanner scannerWithString:readString];
-	[readString release];
 	long long returnValue;
 	if([scanner scanLongLong:&returnValue] == YES) {
 		return( returnValue );
@@ -92,7 +90,6 @@
 	NSString *readString = [[NSString alloc] initWithData:[buffer subdataWithRange:range] encoding:NSASCIIStringEncoding];
 	if(!readString) return 0;
 	NSScanner* scanner = [NSScanner scannerWithString:readString];
-	[readString release];
 	long long returnValue;
 	if([scanner scanLongLong:&returnValue] == YES) {
 		return( returnValue );
@@ -162,8 +159,7 @@
 
 -(void)dealloc
 {
-	[currentGlobalHeader release];
-	[super dealloc];
+    currentGlobalHeader = nil;
 }
 
 -(void)parseSparseHeadersFromData:(NSData*)header numHeaders:(int)num toDict:(NSMutableDictionary *)dict
@@ -410,8 +406,7 @@
 		// POSIX.2001 global header.
 		case 'g': {
 			// Read in the header and store for parsing
-			[currentGlobalHeader release];
-			currentGlobalHeader = [[handle readDataOfLength:size] retain];
+			currentGlobalHeader = [handle readDataOfLength:size];
 			[handle seekToFileOffset:offset];
 
 			// Parse next header.
@@ -528,60 +523,58 @@
 
 	while([self shouldKeepParsing])
 	{
-		NSAutoreleasePool *pool = [NSAutoreleasePool new];
+        @autoreleasepool {
 
-		// Read next header.
-		if([handle atEndOfFile]) break;
-		NSData *header = [handle readDataOfLength:512];
+            // Read next header.
+            if([handle atEndOfFile]) break;
+            NSData *header = [handle readDataOfLength:512];
 
-		// Figure out format if we haven't yet done so.
-		if( tarFormat == -1 ) tarFormat = [XADTarParser getTarType:header];
-		
-		// See if there are 512 nullbytes. That means the file is over.
-		const char *firstBytes = [header bytes];
-		BOOL isArchiverOver = YES;
-		for( int i = 0; i < 512; i++ ) {		
-			if( firstBytes[i] != '\000' ) {
-				isArchiverOver = NO;
-			}
-		}
-		if( isArchiverOver )
-		{
-			[pool release];
-			break;
-		}
+            // Figure out format if we haven't yet done so.
+            if( tarFormat == -1 ) tarFormat = [XADTarParser getTarType:header];
 
-		NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+            // See if there are 512 nullbytes. That means the file is over.
+            const char *firstBytes = [header bytes];
+            BOOL isArchiverOver = YES;
+            for( int i = 0; i < 512; i++ ) {
+                if( firstBytes[i] != '\000' ) {
+                    isArchiverOver = NO;
+                }
+            }
+            if( isArchiverOver ) {
+                break;
+            }
 
-		// Reset sparseity.
-		[dict setObject:[NSNumber numberWithBool:NO] forKey:@"TARIsSparseFile"];
+            NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 
-		int wrongFormat = [self parseGenericTarHeader:header toDict:dict];
-		if( wrongFormat == 1 ) {
-			tarFormat = TAR_FORMAT_GNU;
-		}
+            // Reset sparseity.
+            [dict setObject:[NSNumber numberWithBool:NO] forKey:@"TARIsSparseFile"];
 
-		if( tarFormat == TAR_FORMAT_V7 || tarFormat == TAR_FORMAT_V7_RECOGNIZED ) {
-			[self addTarEntryWithDictionaryAndSeek:dict];
-		}
-		else if( tarFormat == TAR_FORMAT_USTAR )
-		{
-			[self parseUstarTarHeader:header toDict:dict];
-			[self addTarEntryWithDictionaryAndSeek:dict];
-		}
-		else if( tarFormat == TAR_FORMAT_GNU )
-		{
-			[self parseGnuTarHeader:header toDict:dict];
-			[self addTarEntryWithDictionaryAndSeek:dict];
-		}
-		else
-		{
-			// Handled like an ustar archive.
-			[self parseUstarTarHeader:header toDict:dict];
-			[self addTarEntryWithDictionaryAndSeek:dict];
-		}
+            int wrongFormat = [self parseGenericTarHeader:header toDict:dict];
+            if( wrongFormat == 1 ) {
+                tarFormat = TAR_FORMAT_GNU;
+            }
 
-		[pool release];
+            if( tarFormat == TAR_FORMAT_V7 || tarFormat == TAR_FORMAT_V7_RECOGNIZED ) {
+                [self addTarEntryWithDictionaryAndSeek:dict];
+            }
+            else if( tarFormat == TAR_FORMAT_USTAR )
+            {
+                [self parseUstarTarHeader:header toDict:dict];
+                [self addTarEntryWithDictionaryAndSeek:dict];
+            }
+            else if( tarFormat == TAR_FORMAT_GNU )
+            {
+                [self parseGnuTarHeader:header toDict:dict];
+                [self addTarEntryWithDictionaryAndSeek:dict];
+            }
+            else
+            {
+                // Handled like an ustar archive.
+                [self parseUstarTarHeader:header toDict:dict];
+                [self addTarEntryWithDictionaryAndSeek:dict];
+            }
+
+        } // autorelease pool
 	}
 }
 

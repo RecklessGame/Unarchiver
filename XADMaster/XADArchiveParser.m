@@ -132,7 +132,7 @@ static int maxheader=0;
 	if(hasinitialized) return;
 	hasinitialized=YES;
 
-	parserclasses=[[NSMutableArray arrayWithObjects:
+	parserclasses=[NSMutableArray arrayWithObjects:
 		// Common formats
 		[XADZipParser class],
 		[XADRARParser class],
@@ -206,7 +206,7 @@ static int maxheader=0;
 
 		// LibXAD
 		[XADLibXADParser class],
-	nil] retain];
+	nil];
 
 	NSEnumerator *enumerator=[parserclasses objectEnumerator];
 	Class class;
@@ -286,7 +286,7 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 	Class parserclass=[self archiveParserClassForHandle:handle firstBytes:header
 	resourceFork:fork name:name propertiesToAdd:props];
 
-	XADArchiveParser *parser=[[parserclass new] autorelease];
+	XADArchiveParser *parser=[parserclass new];
 	[parser setHandle:handle];
 	[parser setResourceFork:fork];
 	[parser setName:name];
@@ -337,7 +337,7 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 
 				CSMultiHandle *multihandle=[CSMultiHandle multiHandleWithHandleArray:handles];
 
-				XADArchiveParser *parser=[[parserclass new] autorelease];
+				XADArchiveParser *parser=[parserclass new];
 				[parser setHandle:multihandle];
 				[parser setResourceFork:fork];
 				[parser setAllFilenames:volumes];
@@ -355,7 +355,7 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 	}
 	@catch(id e) { } // Fall through to a single file instead.
 
-	XADArchiveParser *parser=[[parserclass new] autorelease];
+	XADArchiveParser *parser=[parserclass new];
 	[parser setHandle:handle];
 	[parser setResourceFork:fork];
 	[parser setFilename:filename];
@@ -464,17 +464,16 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 
 -(void)dealloc
 {
-	[sourcehandle release];
-	[skiphandle release];
-	[password release];
-	[passwordencodingname release];
-	[stringsource release];
-	[properties release];
-	[currsolidobj release];
-	[currsolidhandle release];
-	[firstsoliddict release];
-	[prevsoliddict release];
-	[super dealloc];
+    sourcehandle = nil;
+    skiphandle = nil;
+    password = nil;
+    passwordencodingname = nil;
+    stringsource = nil;
+    properties = nil;
+    currsolidobj = nil;
+    currsolidhandle = nil;
+    firstsoliddict = nil;
+    prevsoliddict = nil;
 }
 
 
@@ -484,8 +483,7 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 
 -(void)setHandle:(CSHandle *)newhandle
 {
-	[sourcehandle autorelease];
-	sourcehandle=[newhandle retain];
+    sourcehandle=newhandle;
 
 	// If the handle is a CSStreamHandle, it can not seek, so treat
 	// this like a solid archive (for instance, .tar.gz). Also, it will
@@ -501,8 +499,7 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 
 -(void)setResourceFork:(XADResourceFork *)newfork
 {
-	[resourcefork autorelease];
-	resourcefork=[newfork retain];
+    resourcefork=newfork;
 }
 
 -(NSString *)name { return [properties objectForKey:XADArchiveNameKey]; }
@@ -569,14 +566,11 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 
 -(void)setPassword:(NSString *)newpassword
 {
-	[password autorelease];
-	password=[newpassword retain];
+    password=newpassword;
 
 	// Make sure to invalidate any remaining solid handles, as they will need to change
 	// for the new password.
-	[currsolidobj release];
 	currsolidobj=nil;
-	[currsolidhandle release];
 	currsolidhandle=nil;
 }
 
@@ -610,8 +604,7 @@ resourceFork:(XADResourceFork *)fork name:(NSString *)name propertiesToAdd:(NSMu
 {
 	if(encodingname!=passwordencodingname)
 	{
-		[passwordencodingname release];
-		passwordencodingname=[encodingname retain];
+        passwordencodingname=encodingname;
 	}
 }
 
@@ -766,8 +759,7 @@ static NSComparisonResult XADVolumeSort(id entry1,id entry2,void *extptr)
 	return [self scanForVolumesWithFilename:filename regex:regex firstFileExtension:nil];
 }
 
-+(NSArray *)scanForVolumesWithFilename:(NSString *)filename
-regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
++(NSArray *)scanForVolumesWithFilename:(NSString *)filename regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 {
 	NSMutableArray *volumes=[NSMutableArray array];
 
@@ -792,7 +784,7 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 		if([regex matchesString:filename]) [volumes addObject:filename];
 	}
 
-	[volumes sortUsingFunction:XADVolumeSort context:firstext];
+	[volumes sortUsingFunction:XADVolumeSort context:(__bridge void *)firstext];
 
 	return volumes;
 }
@@ -850,10 +842,8 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 	if(solidobj!=currsolidobj)
 	{
-		[currsolidobj release];
-		currsolidobj=[solidobj retain];
-		[currsolidhandle release];
-		currsolidhandle=[[self handleForSolidStreamWithObject:solidobj wantChecksum:YES] retain];
+		currsolidobj=solidobj;
+		currsolidhandle=[self handleForSolidStreamWithObject:solidobj wantChecksum:YES];
 	}
 
 	if(!currsolidhandle) return nil;
@@ -1003,26 +993,19 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 			[dict setObject:[NSValue valueWithNonretainedObject:firstsoliddict] forKey:XADFirstSolidEntryKey];
 			[prevsoliddict setObject:[dict objectForKey:XADIndexKey] forKey:XADNextSolidIndexKey];
 			[prevsoliddict setObject:[NSValue valueWithNonretainedObject:dict] forKey:XADNextSolidEntryKey];
-
-			[prevsoliddict release];
-			prevsoliddict=[dict retain];
+			prevsoliddict=dict;
 		}
 		else
 		{
 			parsersolidobj=solidobj;
-
-			[firstsoliddict release];
-			[prevsoliddict release];
-			firstsoliddict=[dict retain];
-			prevsoliddict=[dict retain];
+			firstsoliddict=dict;
+			prevsoliddict=dict;
 		}
 	}
 	else if(parsersolidobj)
 	{
 		parsersolidobj=nil;
-		[firstsoliddict release];
 		firstsoliddict=nil;
-		[prevsoliddict release];
 		prevsoliddict=nil;
 	}
 
@@ -1032,17 +1015,14 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 
 
 
-	NSAutoreleasePool *delegatepool=[NSAutoreleasePool new];
-
-	if(retainpos)
-	{
-		off_t pos=[sourcehandle offsetInFile];
-		[delegate archiveParser:self foundEntryWithDictionary:dict];
-		[sourcehandle seekToFileOffset:pos];
-	}
-	else [delegate archiveParser:self foundEntryWithDictionary:dict];
-
-	[delegatepool release];
+    @autoreleasepool {
+        if(retainpos) {
+            off_t pos=[sourcehandle offsetInFile];
+            [delegate archiveParser:self foundEntryWithDictionary:dict];
+            [sourcehandle seekToFileOffset:pos];
+        }
+        else [delegate archiveParser:self foundEntryWithDictionary:dict];
+    }
 }
 
 
@@ -1162,7 +1142,7 @@ regex:(XADRegex *)regex firstFileExtension:(NSString *)firstext
 {
 	va_list args;
 	va_start(args,reason);
-	NSString *fullreason=[[[NSString alloc] initWithFormat:reason arguments:args] autorelease];
+	NSString *fullreason=[[NSString alloc] initWithFormat:reason arguments:args];
 	va_end(args);
 
 	[delegate archiveParser:self findsFileInterestingForReason:[NSString stringWithFormat:

@@ -21,17 +21,11 @@ static const int MetaCodeLengths[37];
 
 -(void)dealloc
 {
-	[firstcode release];
-	[secondcode release];
-	[offsetcode release];
-	[super dealloc];
+    firstcode=secondcode=offsetcode=nil;
 }
 
 -(void)resetLZSSHandle
 {
-	[firstcode release];
-	[secondcode release];
-	[offsetcode release];
 	firstcode=secondcode=offsetcode=nil;
 
 	int val=CSInputNextByte(input);
@@ -44,7 +38,7 @@ static const int MetaCodeLengths[37];
 		for(int i=0;i<37;i++) [metacode addValue:i forCodeWithLowBitFirst:MetaCodes[i] length:MetaCodeLengths[i]];
 
 		firstcode=[self allocAndParseCodeOfSize:321 metaCode:metacode];
-		if(val&0x08) secondcode=[firstcode retain];
+		if(val&0x08) secondcode=firstcode;
 		else secondcode=[self allocAndParseCodeOfSize:321 metaCode:metacode];
 		offsetcode=[self allocAndParseCodeOfSize:(val&0x07)+10 metaCode:metacode];
 	}

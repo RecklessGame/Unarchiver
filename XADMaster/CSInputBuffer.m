@@ -9,7 +9,7 @@ CSInputBuffer *CSInputBufferAlloc(CSHandle *parent,int size)
 	CSInputBuffer *self=malloc(sizeof(CSInputBuffer)+size);
 	if(!self) return NULL;
 
-	self->parent=[parent retain];
+	self->parent=parent;
 	self->startoffs=[parent offsetInFile];
 	self->eof=NO;
 
@@ -61,10 +61,10 @@ CSInputBuffer *CSInputBufferAllocEmpty()
 	return self;
 }
 
-void CSInputBufferFree(CSInputBuffer *self)
+void CSInputBufferFree(CSInputBuffer *buffer)
 {
-	if(self) [self->parent release];
-	free(self);
+	if(buffer) buffer->parent = nil;
+	free(buffer);
 }
 
 void CSInputSetMemoryBuffer(CSInputBuffer *self,uint8_t *buffer,int length,off_t startoffs)

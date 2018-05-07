@@ -97,7 +97,7 @@ NSString *CSByteStreamEOFReachedException=@"CSByteStreamEOFReachedException";
 {
 	[parent release];
 	[coro release];
-	[super dealloc];
+	
 }
 
 -(off_t)offsetInFile { return pos; }

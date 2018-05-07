@@ -185,10 +185,10 @@
 
 	if(checksum)
 	{
-		NSNumber *check=[dict objectForKey:@"CpioChecksum"];
-		if(check) handle=[[[XADChecksumHandle alloc] initWithHandle:handle
-		length:[[dict objectForKey:XADDataLengthKey] longLongValue]
-		correctChecksum:[check intValue] mask:0xffffffff] autorelease];
+        NSNumber *check=[dict objectForKey:@"CpioChecksum"];
+        if(check) handle=[[XADChecksumHandle alloc] initWithHandle:handle
+                                                            length:[[dict objectForKey:XADDataLengthKey] longLongValue]
+                                                   correctChecksum:[check intValue] mask:0xffffffff];
 	}
 
 	return handle;

@@ -41,7 +41,7 @@ static uint64_t ParseInteger(CSHandle *fh);
 {
 	[parent release];
 	[currhandle release];
-	[super dealloc];
+	
 }
 
 -(void)resetStream

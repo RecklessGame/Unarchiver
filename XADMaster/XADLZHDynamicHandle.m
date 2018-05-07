@@ -24,7 +24,7 @@
 -(void)dealloc
 {
 	[distancecode release];
-	[super dealloc];
+	
 }
 
 -(void)resetLZSSHandle

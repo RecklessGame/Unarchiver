@@ -18,7 +18,7 @@ static inline uint16_t rol8(uint16_t val,int n) { return (val<<n)|(val>>(8-n)); 
 -(void)dealloc
 {
 	[password release];
-	[super dealloc];
+	
 }
 
 

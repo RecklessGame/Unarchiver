@@ -18,7 +18,7 @@
 {
 	free(sectable);
 	free(minisectable);
-	[super dealloc];
+	
 }
 
 +(int)requiredHeaderSize { return 512; }

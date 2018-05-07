@@ -122,7 +122,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 -(void)dealloc
 {
 	[solidhandle release];
-	[super dealloc];
+	
 }
 
 -(void)parse

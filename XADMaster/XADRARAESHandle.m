@@ -70,7 +70,7 @@ keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybu
 {
 	if((self=[super initWithName:[handle name] length:length]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		startoffs=[handle offsetInFile];
 
 		const uint8_t *keybytes=[keydata bytes];
@@ -89,7 +89,7 @@ keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybu
 {
 	if((self=[super initWithName:[handle name] length:length]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		startoffs=[handle offsetInFile];
 
 		memcpy(iv,[ivdata bytes],16);
@@ -100,8 +100,7 @@ keybuf[8],keybuf[9],keybuf[10],keybuf[11],keybuf[12],keybuf[13],keybuf[14],keybu
 
 -(void)dealloc
 {
-	[parent release];
-	[super dealloc];
+    parent = nil;
 }
 
 -(void)resetBlockStream

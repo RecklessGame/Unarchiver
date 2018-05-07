@@ -130,13 +130,13 @@ int CSInputNextSymbolUsingCodeLE(CSInputBuffer *buf,XADPrefixCode *code)
 
 
 
-+(XADPrefixCode *)prefixCode { return [[self new] autorelease]; }
++(XADPrefixCode *)prefixCode { return [self new]; }
 
 +(XADPrefixCode *)prefixCodeWithLengths:(const int *)lengths numberOfSymbols:(int)numsymbols
-maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
+                          maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
 {
-	return [[[self alloc] initWithLengths:lengths numberOfSymbols:numsymbols
-	maximumLength:maxlength shortestCodeIsZeros:zeros] autorelease];
+    return [[self alloc] initWithLengths:lengths numberOfSymbols:numsymbols
+                           maximumLength:maxlength shortestCodeIsZeros:zeros];
 }
 
 -(id)init
@@ -171,7 +171,7 @@ maximumLength:(int)maxlength shortestCodeIsZeros:(BOOL)zeros
 }
 
 -(id)initWithLengths:(const int *)lengths numberOfSymbols:(int)numsymbols
-maximumLength:(int)maxcodelength shortestCodeIsZeros:(BOOL)zeros
+       maximumLength:(int)maxcodelength shortestCodeIsZeros:(BOOL)zeros
 {
 	if((self=[self init]))
 	{
@@ -195,7 +195,8 @@ maximumLength:(int)maxcodelength shortestCodeIsZeros:(BOOL)zeros
 		}
 		@catch (id e)
 		{
-			[self release];
+#warning need re-think of self release, exception in class's constrcutor?
+			//[self release];
 			@throw;
 		}
 	}
@@ -207,10 +208,9 @@ maximumLength:(int)maxcodelength shortestCodeIsZeros:(BOOL)zeros
 -(void)dealloc
 {
 	if(!isstatic) free(tree);
-	free(table1);
-	free(table2);
-	[stack release];
-	[super dealloc];
+	free(table1);   table1 = NULL;
+	free(table2);   table2 = NULL;
+    stack = nil;
 }
 
 -(void)addValue:(int)value forCodeWithHighBitFirst:(uint32_t)code length:(int)length

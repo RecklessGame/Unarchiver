@@ -108,7 +108,7 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 	[fh seekToFileOffset:element->dataoffset];
 	[fh flushReadBits];
 
-	CSHandle *handle=[[[XADStuffItXBlockHandle alloc] initWithHandle:fh] autorelease];
+	CSHandle *handle=[[XADStuffItXBlockHandle alloc] initWithHandle:fh];
 
 	off_t uncompressedlength;
 	if(element->alglist[2]==0) uncompressedlength=CSHandleMaxLength;
@@ -122,22 +122,22 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 		{
 			int allocsize=1<<[handle readUInt8];
 			int order=[handle readUInt8];
-			handle=[[[XADStuffItXBrimstoneHandle alloc] initWithHandle:handle
-			length:uncompressedlength maxOrder:order subAllocSize:allocsize] autorelease];
+            handle=[[XADStuffItXBrimstoneHandle alloc] initWithHandle:handle
+                                                               length:uncompressedlength maxOrder:order subAllocSize:allocsize];
 		}
 		break;
 
 		case 1: // Cyanide
-			handle=[[[XADStuffItXCyanideHandle alloc] initWithHandle:handle
-			length:uncompressedlength] autorelease];
+            handle=[[XADStuffItXCyanideHandle alloc] initWithHandle:handle
+                                                             length:uncompressedlength];
 		break;
 
 		case 2: // Darkhorse
 		{
 			int windowsize=1<<[handle readUInt8];
 			if(windowsize<0x100000) windowsize=0x100000;
-			handle=[[[XADStuffItXDarkhorseHandle alloc] initWithHandle:handle
-			length:uncompressedlength windowSize:windowsize] autorelease];
+            handle=[[XADStuffItXDarkhorseHandle alloc] initWithHandle:handle
+                                                               length:uncompressedlength windowSize:windowsize];
 		}
 		break;
 
@@ -145,27 +145,27 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 		{
 			int windowsize=[handle readUInt8];
 			if(windowsize!=15) return nil; // alternate sizes are not supported, as no files have been found that use them
-			handle=[[[XADDeflateHandle alloc] initWithHandle:handle
-			length:uncompressedlength variant:XADStuffItXDeflateVariant] autorelease];
+            handle=[[XADDeflateHandle alloc] initWithHandle:handle
+                                                     length:uncompressedlength variant:XADStuffItXDeflateVariant];
 		}
 		break;
 
 		case 4: // Blend
-			handle=[[[XADStuffItXBlendHandle alloc] initWithHandle:handle
-			length:uncompressedlength] autorelease];
+            handle=[[XADStuffItXBlendHandle alloc] initWithHandle:handle
+                                                           length:uncompressedlength];
 		break;
 
 		case 5: // No compression, obscured by RC4
 		{
 			[handle skipBytes:2];
 			NSData *key=[handle readDataOfLength:1];
-			handle=[[[XADRC4Handle alloc] initWithHandle:handle key:key] autorelease];
+			handle=[[XADRC4Handle alloc] initWithHandle:handle key:key];
 		}
 		break;
 
 		case 6: // Iron
-			handle=[[[XADStuffItXIronHandle alloc] initWithHandle:handle
-			length:uncompressedlength] autorelease];
+            handle=[[XADStuffItXIronHandle alloc] initWithHandle:handle
+                                                          length:uncompressedlength];
 		break;
 
 		default:
@@ -178,14 +178,14 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 		case -1: break; // no filtering
 
 		case 0: // English
-			handle=[[[XADStuffItXEnglishHandle alloc] initWithHandle:handle length:element->actualsize] autorelease];
+			handle=[[XADStuffItXEnglishHandle alloc] initWithHandle:handle length:element->actualsize];
 		break;
 
 //		case 1: // biff
 //		break;
 
 		case 2: // x86
-			handle=[[[XADStuffItXX86Handle alloc] initWithHandle:handle length:element->actualsize] autorelease];
+			handle=[[XADStuffItXX86Handle alloc] initWithHandle:handle length:element->actualsize];
 		break;
 
 /*		case 3: // peff
@@ -280,9 +280,9 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 
 -(void)dealloc
 {
-	[repeatedentrydata release];
-	[repeatedentries release];
-	[super dealloc];
+    repeatedentrydata = nil;
+    repeatedentries = nil;
+	
 }
 
 -(void)parse
@@ -731,20 +731,20 @@ static CSHandle *HandleForElement(XADStuffItXParser *self,StuffItXElement *eleme
 	{
 		if(repeat!=repeatedentries)
 		{
-			[repeatedentrydata release];
-			[repeatedentries release];
+            repeatedentrydata = nil;
+            repeatedentries = nil;
 
-			repeatedentries=[repeat retain];
+            repeatedentries=repeat;
 
 			CSHandle *handle=[self subHandleFromSolidStreamForEntryWithDictionary:dict];
 
-			repeatedentrydata=[[handle remainingFileContents] retain];
+			repeatedentrydata=[handle remainingFileContents];
 			repeatedentryhaschecksum=[handle hasChecksum];
 			repeatedentryiscorrect=[handle isChecksumCorrect];
 		}
 
-		return [[[XADStuffItXRepeatedEntryHandle alloc] initWithData:repeatedentrydata
-		hasChecksum:repeatedentryhaschecksum isChecksumCorrect:repeatedentryiscorrect] autorelease];
+        return [[XADStuffItXRepeatedEntryHandle alloc] initWithData:repeatedentrydata
+                                                        hasChecksum:repeatedentryhaschecksum isChecksumCorrect:repeatedentryiscorrect];
 	}
 	else
 	{

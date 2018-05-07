@@ -18,7 +18,7 @@ int main(int argc,const char **argv)
 	setlocale(LC_ALL,""); // GNUstep requires this.
 	#endif
 
-	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+    @autoreleasepool {
 
 	CSCommandLineParser *cmdline=[[CSCommandLineParser new] autorelease];
 
@@ -306,7 +306,7 @@ int main(int argc,const char **argv)
 
 	// TODO: Print interest?
 
-	[pool release];
+    } // autorelease pool
 
 	return parseerror||unarchiveerror||numerrors;
 }

@@ -39,7 +39,7 @@ startPosition:(off_t)startpos length:(int)length
 -(void)dealloc
 {
 	[invocation release];
-	[super dealloc];
+	
 }
 
 -(off_t)startPosition { return blockstartpos; }

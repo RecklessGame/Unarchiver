@@ -46,7 +46,7 @@
 {
 	free( regions );
 	[parent release];
-	[super dealloc];
+	
 }
 
 // Find which region some offset is in.

@@ -18,7 +18,7 @@ logicalBlockSize:(int)logical physicalBlockSize:(int)physical;
 -(void)dealloc
 {
 	[parent release];
-	[super dealloc];
+	
 }
 
 

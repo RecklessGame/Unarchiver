@@ -67,7 +67,7 @@ static BOOL IsDelimiter(uint8_t c);
 	[unresolved release];
 	[trailerdict release];
 	[encryption release];
-	[super dealloc];
+	
 }
 
 
@@ -263,31 +263,31 @@ static BOOL IsDelimiter(uint8_t c);
 
 			for(int i=0;i<num;i++)
 			{
-				NSAutoreleasePool *pool=[NSAutoreleasePool new];
+                @autoreleasepool {
 
-				char entry[21];
-				[mainhandle seekToFileOffset:tableoffset+i*20];
-				[mainhandle readBytes:20 toBuffer:entry];
-				entry[20]=0; // Not strictly necessary?
+                    char entry[21];
+                    [mainhandle seekToFileOffset:tableoffset+i*20];
+                    [mainhandle readBytes:20 toBuffer:entry];
+                    entry[20]=0; // Not strictly necessary?
 
-				if(entry[17]!='n') continue;
+                    if(entry[17]!='n') continue;
 
-				off_t objoffs=atoll(entry);
-				//int objgen=atol(entry+11);
+                    off_t objoffs=atoll(entry);
+                    //int objgen=atol(entry+11);
 
-				if(!objoffs) continue; // Kludge to handle broken Apple PDF files.
-				if(objoffs>totalsize) continue; // Kludge to handle some other broken files.
+                    if(!objoffs) continue; // Kludge to handle broken Apple PDF files.
+                    if(objoffs>totalsize) continue; // Kludge to handle some other broken files.
 
-				[self startParsingFromHandle:mainhandle atOffset:objoffs];
+                    [self startParsingFromHandle:mainhandle atOffset:objoffs];
 
-				PDFObjectReference *ref;
-				id obj=[self parsePDFObjectWithReferencePointer:&ref];
+                    PDFObjectReference *ref;
+                    id obj=[self parsePDFObjectWithReferencePointer:&ref];
 
-				// Some PDF files are so broken than the object numbers don't actually match.
-				//PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:first+i generation:objgen];
-				if(obj && ![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
+                    // Some PDF files are so broken than the object numbers don't actually match.
+                    //PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:first+i generation:objgen];
+                    if(obj && ![objdict objectForKey:ref]) [objdict setObject:obj forKey:ref];
 
-				[pool release];
+                } // autorelease pool
 			}
 
 			[self startParsingFromHandle:mainhandle atOffset:tableoffset+num*20];
@@ -356,7 +356,7 @@ static BOOL IsDelimiter(uint8_t c);
 			if(type!=1) continue;
 			if(!value1) continue; // Kludge to handle broken Apple PDF files. TODO: Is this actually needed here?
 
-			NSAutoreleasePool *pool=[NSAutoreleasePool new];
+            @autoreleasepool {
 
 			off_t curroffs=[mainhandle offsetInFile];
 			[self startParsingFromHandle:mainhandle atOffset:value1];
@@ -380,7 +380,7 @@ static BOOL IsDelimiter(uint8_t c);
 				}
 			}
 
-			[pool release];
+            } // autorelease pool
 		}
 	}
 
@@ -556,19 +556,19 @@ static BOOL IsDelimiter(uint8_t c);
 
 	for(int i=0;i<num;i++)
 	{
-		NSAutoreleasePool *pool=[NSAutoreleasePool new];
+        @autoreleasepool {
 
-		PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:objnums[i] generation:0];
+            PDFObjectReference *ref=[PDFObjectReference referenceWithNumber:objnums[i] generation:0];
 
-		// TODO: Strings in compressed object streams are apparently
-		// *not* encrypted. There needs to be some kind of flag for this,
-		// but this is not yet implemented.
-		[self startParsingFromHandle:handle atOffset:offsets[i]+startoffset];
-		id value=[self parsePDFTypeWithParent:ref];
+            // TODO: Strings in compressed object streams are apparently
+            // *not* encrypted. There needs to be some kind of flag for this,
+            // but this is not yet implemented.
+            [self startParsingFromHandle:handle atOffset:offsets[i]+startoffset];
+            id value=[self parsePDFTypeWithParent:ref];
 
-		if(value && ![objdict objectForKey:ref]) [objdict setObject:value forKey:ref];
+            if(value && ![objdict objectForKey:ref]) [objdict setObject:value forKey:ref];
 
-		[pool release];
+        }
 	}
 }
 
@@ -1003,7 +1003,7 @@ static BOOL IsDelimiter(uint8_t c);
 {
 	[data release];
 	[ref release];
-	[super dealloc];
+	
 }
 
 -(NSData *)rawData { return data; }

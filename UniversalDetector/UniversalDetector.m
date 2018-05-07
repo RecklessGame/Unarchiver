@@ -5,7 +5,12 @@
 
 +(UniversalDetector *)detector
 {
-	return [[self new] autorelease];
+    static UniversalDetector *_instance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _instance = [[UniversalDetector alloc] init];
+    });
+	return _instance;
 }
 
 +(NSArray *)possibleMIMECharsets
@@ -40,8 +45,7 @@
 -(void)dealloc
 {
 	FreeUniversalDetector(detector);
-	[charset release];
-	[super dealloc];
+    charset = nil;
 }
 
 -(void)analyzeData:(NSData *)data
@@ -69,7 +73,6 @@
 
 	if(cstr!=lastcstring)
 	{
-		[charset release];
 		charset=[[NSString alloc] initWithUTF8String:cstr];
 		lastcstring=cstr;
 	}

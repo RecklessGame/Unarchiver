@@ -50,9 +50,9 @@ jumpHandle:(CSHandle *)jumphandle rangeHandle:(CSHandle *)rangehandle length:(of
 {
 	if((self=[super initWithHandle:handle length:length]))
 	{
-		calls=[callhandle retain];
-		jumps=[jumphandle retain];
-		ranges=[rangehandle retain];
+		calls=callhandle;
+		jumps=jumphandle;
+		ranges=rangehandle;
 		callstart=[calls offsetInFile];
 		jumpstart=[jumps offsetInFile];
 		rangestart=[ranges offsetInFile];
@@ -62,10 +62,9 @@ jumpHandle:(CSHandle *)jumphandle rangeHandle:(CSHandle *)rangehandle length:(of
 
 -(void)dealloc
 {
-	[calls release];
-	[jumps release];
-	[ranges release];
-	[super dealloc];
+    calls = nil;
+    jumps = nil;
+    ranges = nil;
 }
 
 -(void)resetByteStream

@@ -34,7 +34,7 @@
 -(void)dealloc
 {
 	[resources release];
-	[super dealloc];
+	
 }
 
 -(void)parseFromHandle:(CSHandle *)handle

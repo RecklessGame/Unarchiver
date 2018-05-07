@@ -6,15 +6,15 @@
 {
 	if((self=[super initWithName:[NSString stringWithFormat:@"%@ (Subrange from %qd, length %qd)",[handle name],from,length]]))
 	{
-		parent=[handle retain];
+        parent=handle;
 		start=from;
 		end=from+length;
 
 		[parent seekToFileOffset:start];
 
 		if(parent) return self;
-
-		[self release];
+#warning need re-thinking about self release?
+		//[self release];
 	}
 	return nil;
 }
@@ -32,8 +32,7 @@
 
 -(void)dealloc
 {
-	[parent release];
-	[super dealloc];
+    parent = nil;
 }
 
 -(CSHandle *)parentHandle { return parent; }

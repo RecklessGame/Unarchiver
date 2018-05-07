@@ -41,7 +41,7 @@
 -(void)dealloc
 {
 	free(windowbuffer);
-	[super dealloc];
+	
 }
 
 -(void)resetByteStream

@@ -70,16 +70,15 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *d
 		int lastindex=firsthead.cabindex;
 		while(namedata)
 		{
-			NSAutoreleasePool *pool=[NSAutoreleasePool new];
+            @autoreleasepool {
+                CSHandle *fh=FindHandleForName(namedata,dirname,dircontents);
+                [volumes insertObject:[fh name] atIndex:0];
+                CABHeader head=ReadCABHeader(fh);
+                if(head.cabindex!=lastindex-1) @throw @"Index mismatch";
 
-			CSHandle *fh=FindHandleForName(namedata,dirname,dircontents);
-			[volumes insertObject:[fh name] atIndex:0];
-			CABHeader head=ReadCABHeader(fh);
-			if(head.cabindex!=lastindex-1) @throw @"Index mismatch";
-
-			namedata=[head.prevvolume retain];
-			lastindex=head.cabindex;
-			[pool release];
+                namedata=[head.prevvolume retain];
+                lastindex=head.cabindex;
+            }
 			[namedata autorelease];
 		}
 
@@ -90,16 +89,15 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *d
 		lastindex=firsthead.cabindex;
 		while(namedata)
 		{
-			NSAutoreleasePool *pool=[NSAutoreleasePool new];
+            @autoreleasepool {
+                CSHandle *fh=FindHandleForName(namedata,dirname,dircontents);
+                [volumes addObject:[fh name]];
+                CABHeader head=ReadCABHeader(fh);
+                if(head.cabindex!=lastindex+1) @throw @"Index mismatch";
 
-			CSHandle *fh=FindHandleForName(namedata,dirname,dircontents);
-			[volumes addObject:[fh name]];
-			CABHeader head=ReadCABHeader(fh);
-			if(head.cabindex!=lastindex+1) @throw @"Index mismatch";
-
-			namedata=[head.nextvolume retain];
-			lastindex=head.cabindex;
-			[pool release];
+                namedata=[head.nextvolume retain];
+                lastindex=head.cabindex;
+            }
 			[namedata autorelease];
 		}
 	}

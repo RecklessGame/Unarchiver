@@ -32,7 +32,7 @@ NSString *SWFNoMoreTagsException=@"SWFNoMoreTagsException";
 -(void)dealloc
 {
 	[fh release];
-	[super dealloc];
+	
 }
 
 -(void)parseHeader

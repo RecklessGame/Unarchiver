@@ -33,7 +33,7 @@
 -(void)dealloc
 {
 	[parent release];
-	[super dealloc];
+	
 }
 
 

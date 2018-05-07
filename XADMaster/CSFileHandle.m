@@ -35,7 +35,7 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 	if(!fileh) [NSException raise:CSCannotOpenFileException
 	format:@"Error attempting to open file \"%@\" in mode \"%@\".",path,modes];
 
-	CSFileHandle *handle=[[[CSFileHandle alloc] initWithFilePointer:fileh closeOnDealloc:YES name:path] autorelease];
+	CSFileHandle *handle=[[CSFileHandle alloc] initWithFilePointer:fileh closeOnDealloc:YES name:path];
 	if(handle) return handle;
 
 	fclose(fileh);
@@ -62,11 +62,11 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 	{
 		fh=other->fh;
  		close=NO;
-		parent=[other retain];
+		parent=other;
 
 		if(!other->multilock) [other _setMultiMode];
 
-		multilock=[other->multilock retain];
+		multilock=other->multilock;
 		[multilock lock];
 		pos=other->pos;
 		[multilock unlock];
@@ -77,9 +77,9 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 -(void)dealloc
 {
 	if(fh&&close) fclose(fh);
-	[parent release];
-	[multilock release];
-	[super dealloc];
+    parent = nil;
+    multilock = nil;
+	
 }
 
 -(void)close
@@ -168,9 +168,10 @@ NSString *CSFileErrorException=@"CSFileErrorException";
 -(void)_raiseError
 {
 	if(feof(fh)) [self _raiseEOF];
-	else [[[[NSException alloc] initWithName:CSFileErrorException
-	reason:[NSString stringWithFormat:@"Error while attempting to read file \"%@\": %s.",name,strerror(errno)]
-	userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:errno] forKey:@"ErrNo"]] autorelease] raise];
+    else [[[NSException alloc] initWithName:CSFileErrorException
+                                     reason:[NSString stringWithFormat:@"Error while attempting to read file \"%@\": %s.",name,strerror(errno)]
+                                   userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:errno] forKey:@"ErrNo"]]
+          raise];
 }
 
 -(void)_setMultiMode

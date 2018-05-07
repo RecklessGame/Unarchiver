@@ -21,7 +21,7 @@ static int start_bunzip(bunzip_data *bd,CSHandle *inhandle,uint32_t *dbuf,bool h
 -(void)dealloc
 {
 	[parent release];
-	[super dealloc];
+	
 }
 
 -(void)resetBlockStream

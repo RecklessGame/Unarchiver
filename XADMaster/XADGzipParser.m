@@ -102,7 +102,7 @@
 {
 	CSHandle *handle=[self handle];
 	[handle seekToFileOffset:0];
-	return [[[XADGzipHandle alloc] initWithHandle:handle] autorelease];
+    return [[XADGzipHandle alloc] initWithHandle:handle];
 }
 
 -(NSString *)formatName { return @"Gzip"; }
@@ -166,7 +166,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
     
 	if((self=[super initWithName:[handle name]]))
 	{
-		parent=[handle retain];
+        parent = handle;
 		startoffs=[parent offsetInFile];
 		currhandle=nil;
 	}
@@ -175,9 +175,8 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 
 -(void)dealloc
 {
-	[parent release];
-	[currhandle release];
-	[super dealloc];
+    parent = nil;
+    currhandle = nil;
 }
 
 -(void)resetStream
@@ -230,8 +229,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 			CSZlibHandle *zh=[CSZlibHandle deflateHandleWithHandle:parent];
 			[zh setSeekBackAtEOF:YES];
 
-			[currhandle release];
-			currhandle=[zh retain];
+            currhandle=zh;
 
 			crc=0xffffffff;
 
@@ -275,7 +273,6 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 	if(state==EndState)
 	{
 		[self endStream];
-		[currhandle release];
 		currhandle=nil;
 	}
 

@@ -205,7 +205,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	[namedict release];
 	[parentarchive release];
 
-	[super dealloc];
+	
 }
 
 

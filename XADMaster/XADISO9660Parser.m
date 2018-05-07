@@ -100,7 +100,7 @@ name:(NSString *)name propertiesToAdd:(NSMutableDictionary *)props
 -(void)dealloc;
 {
 	[fh release];
-	[super dealloc];
+	
 }
 
 

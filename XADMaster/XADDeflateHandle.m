@@ -25,11 +25,10 @@
 
 -(void)dealloc
 {
-	[literalcode release];
-	[distancecode release];
-	[fixedliteralcode release];
-	[fixeddistancecode release];
-	[super dealloc];
+	literalcode = nil;
+	distancecode = nil;
+	fixedliteralcode = nil;
+	fixeddistancecode = nil;
 }
 
 -(void)setMetaTableOrder:(const int *)neworder { memcpy(order,neworder,sizeof(order)); }
@@ -95,8 +94,6 @@
 
 -(void)readBlockHeader
 {
-	[literalcode release];
-	[distancecode release];
 	literalcode=nil;
 	distancecode=nil;
 
@@ -121,8 +118,8 @@
 		break;
 
 		case 1: // fixed huffman
-			literalcode=[[self fixedLiteralCode] retain];
-			distancecode=[[self fixedDistanceCode] retain];
+			literalcode=[self fixedLiteralCode];
+			distancecode=[self fixedDistanceCode];
 			storedblock=NO;
 		break;
 
@@ -166,7 +163,7 @@
 			literalcode=[[XADPrefixCode alloc] initWithLengths:lengths numberOfSymbols:numliterals maximumLength:15 shortestCodeIsZeros:YES];
 			distancecode=[[XADPrefixCode alloc] initWithLengths:lengths+numliterals numberOfSymbols:numdistances maximumLength:15 shortestCodeIsZeros:YES];
 
-			[metacode release];
+            metacode = nil;
 			storedblock=NO;
 		}
 		break;

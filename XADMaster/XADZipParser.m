@@ -90,9 +90,8 @@
 
 -(void)dealloc
 {
-	[prevdict release];
-	[prevname release];
-	[super dealloc];
+    prevdict = nil;
+    prevname = nil;
 }
 
 -(void)parseWithSeparateMacForks
@@ -215,113 +214,113 @@
 	{
 		if(![self shouldKeepParsing]) break;
 
-		NSAutoreleasePool *pool=[NSAutoreleasePool new];
+        @autoreleasepool {
 
-		// Read central directory record.
-		uint32_t centralid=[fh readID];
-		if(centralid!=0x504b0102) [XADException raiseIllegalDataException]; // could try recovering here
+            // Read central directory record.
+            uint32_t centralid=[fh readID];
+            if(centralid!=0x504b0102) [XADException raiseIllegalDataException]; // could try recovering here
 
-		/*int creatorversion=*/[fh readUInt8];
-		int system=[fh readUInt8];
-		int extractversion=[fh readUInt16LE];
-		int flags=[fh readUInt16LE];
-		int compressionmethod=[fh readUInt16LE];
-		uint32_t date=[fh readUInt32LE];
-		uint32_t crc=[fh readUInt32LE];
-		off_t compsize=[fh readUInt32LE];
-		off_t uncompsize=[fh readUInt32LE];
-		int namelength=[fh readUInt16LE];
-		int extralength=[fh readUInt16LE];
-		int commentlength=[fh readUInt16LE];
-		int startdisk=[fh readUInt16LE];
-		/*int infileattrib=*/[fh readUInt16LE];
-		uint32_t extfileattrib=[fh readUInt32LE];
-		off_t locheaderoffset=[fh readUInt32LE];
+            /*int creatorversion=*/[fh readUInt8];
+            int system=[fh readUInt8];
+            int extractversion=[fh readUInt16LE];
+            int flags=[fh readUInt16LE];
+            int compressionmethod=[fh readUInt16LE];
+            uint32_t date=[fh readUInt32LE];
+            uint32_t crc=[fh readUInt32LE];
+            off_t compsize=[fh readUInt32LE];
+            off_t uncompsize=[fh readUInt32LE];
+            int namelength=[fh readUInt16LE];
+            int extralength=[fh readUInt16LE];
+            int commentlength=[fh readUInt16LE];
+            int startdisk=[fh readUInt16LE];
+            /*int infileattrib=*/[fh readUInt16LE];
+            uint32_t extfileattrib=[fh readUInt32LE];
+            off_t locheaderoffset=[fh readUInt32LE];
 
-		[fh skipBytes:namelength];
+            [fh skipBytes:namelength];
 
-		// Read central directory extra fields, just to find the Zip64 field.
-		int length=extralength;
-		while(length>9)
-		{
-			int extid=[fh readUInt16LE];
-			int size=[fh readUInt16LE];
-			length-=4;
+            // Read central directory extra fields, just to find the Zip64 field.
+            int length=extralength;
+            while(length>9)
+            {
+                int extid=[fh readUInt16LE];
+                int size=[fh readUInt16LE];
+                length-=4;
 
-			if(size>length) break;
-			length-=size;
-			off_t nextextra=[fh offsetInFile]+size;
+                if(size>length) break;
+                length-=size;
+                off_t nextextra=[fh offsetInFile]+size;
 
-			if(extid==1)
-			{
-				if(uncompsize==0xffffffff) uncompsize=[fh readUInt64LE];
-				if(compsize==0xffffffff) compsize=[fh readUInt64LE];
-				if(locheaderoffset==0xffffffff) locheaderoffset=[fh readUInt64LE];
-				if(startdisk==0xffff) startdisk=[fh readUInt32LE];
-				break;
-			}
+                if(extid==1)
+                {
+                    if(uncompsize==0xffffffff) uncompsize=[fh readUInt64LE];
+                    if(compsize==0xffffffff) compsize=[fh readUInt64LE];
+                    if(locheaderoffset==0xffffffff) locheaderoffset=[fh readUInt64LE];
+                    if(startdisk==0xffff) startdisk=[fh readUInt32LE];
+                    break;
+                }
 
-			[fh seekToFileOffset:nextextra];
-		}
-		if(length) [fh skipBytes:length];
+                [fh seekToFileOffset:nextextra];
+            }
+            if(length) [fh skipBytes:length];
 
-		NSData *commentdata=nil;
-		if(commentlength) commentdata=[fh readDataOfLength:commentlength];
-        
-		off_t next=[fh offsetInFile];
+            NSData *commentdata=nil;
+            if(commentlength) commentdata=[fh readDataOfLength:commentlength];
 
-		// Some idiotic compressors write files with more than 65535 files without
-		// using Zip64, so numentries overflows. Try to detect if there is enough space
-		// left in the central directory for another 65536 files, and if so, extend the
-		// parsing to include them. This may happen multiple times.
-		if(i==numentries-1 && zip64offs<0)
-		{
-			if(centraloffset+centralsize-next>65536*46) numentries+=65536;
-		}
+            off_t next=[fh offsetInFile];
 
-		// Read local header
-		[fh seekToFileOffset:[self offsetForVolume:startdisk offset:locheaderoffset]];
+            // Some idiotic compressors write files with more than 65535 files without
+            // using Zip64, so numentries overflows. Try to detect if there is enough space
+            // left in the central directory for another 65536 files, and if so, extend the
+            // parsing to include them. This may happen multiple times.
+            if(i==numentries-1 && zip64offs<0)
+            {
+                if(centraloffset+centralsize-next>65536*46) numentries+=65536;
+            }
 
-		uint32_t localid=[fh readID];
-		if(localid==0x504b0304||localid==0x504b0506) // kludge for strange archives
-		{
-			//int localextractversion=[fh readUInt16LE];
-			//int localflags=[fh readUInt16LE];
-			//int localcompressionmethod=[fh readUInt16LE];
-			[fh skipBytes:6];
-			uint32_t localdate=[fh readUInt32LE];
-			//uint32_t localcrc=[fh readUInt32LE];
-			//uint32_t localcompsize=[fh readUInt32LE];
-			//uint32_t localuncompsize=[fh readUInt32LE];
-			[fh skipBytes:12];
-			int localnamelength=[fh readUInt16LE];
-			int localextralength=[fh readUInt16LE];
+            // Read local header
+            [fh seekToFileOffset:[self offsetForVolume:startdisk offset:locheaderoffset]];
 
-			off_t dataoffset=[fh offsetInFile]+localnamelength+localextralength;
+            uint32_t localid=[fh readID];
+            if(localid==0x504b0304||localid==0x504b0506) // kludge for strange archives
+            {
+                //int localextractversion=[fh readUInt16LE];
+                //int localflags=[fh readUInt16LE];
+                //int localcompressionmethod=[fh readUInt16LE];
+                [fh skipBytes:6];
+                uint32_t localdate=[fh readUInt32LE];
+                //uint32_t localcrc=[fh readUInt32LE];
+                //uint32_t localcompsize=[fh readUInt32LE];
+                //uint32_t localuncompsize=[fh readUInt32LE];
+                [fh skipBytes:12];
+                int localnamelength=[fh readUInt16LE];
+                int localextralength=[fh readUInt16LE];
 
-			NSData *namedata=nil;
-			if(localnamelength) namedata=[fh readDataOfLength:localnamelength];
+                off_t dataoffset=[fh offsetInFile]+localnamelength+localextralength;
 
-			NSDictionary *extradict=nil;
-			@try {
-				if(localextralength) extradict=[self parseZipExtraWithLength:localextralength nameData:namedata
-				uncompressedSizePointer:&uncompsize compressedSizePointer:&compsize];
-			} @catch(id e) {
-				[self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
-				NSLog(@"Error parsing Zip extra fields: %@",e);
-			}
+                NSData *namedata=nil;
+                if(localnamelength) namedata=[fh readDataOfLength:localnamelength];
 
-			[self addZipEntryWithSystem:system extractVersion:extractversion flags:flags
-			compressionMethod:compressionmethod date:date crc:crc localDate:localdate
-			compressedSize:compsize uncompressedSize:uncompsize extendedFileAttributes:extfileattrib
-			extraDictionary:extradict dataOffset:dataoffset nameData:namedata commentData:commentdata
-			isLastEntry:i==numentries-1];
-		}
-		else [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
+                NSDictionary *extradict=nil;
+                @try {
+                    if(localextralength) extradict=[self parseZipExtraWithLength:localextralength nameData:namedata
+                                                         uncompressedSizePointer:&uncompsize compressedSizePointer:&compsize];
+                } @catch(id e) {
+                    [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
+                    NSLog(@"Error parsing Zip extra fields: %@",e);
+                }
 
-		[fh seekToFileOffset:next];
+                [self addZipEntryWithSystem:system extractVersion:extractversion flags:flags
+                          compressionMethod:compressionmethod date:date crc:crc localDate:localdate
+                             compressedSize:compsize uncompressedSize:uncompsize extendedFileAttributes:extfileattrib
+                            extraDictionary:extradict dataOffset:dataoffset nameData:namedata commentData:commentdata
+                                isLastEntry:i==numentries-1];
+            }
+            else [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
 
-		[pool release];
+            [fh seekToFileOffset:next];
+
+        }   // autorelease pool
 	}
 }
 
@@ -335,86 +334,85 @@
 
 	while([self shouldKeepParsing])
 	{
-		NSAutoreleasePool *pool=[NSAutoreleasePool new];
+        @autoreleasepool {
 
-		uint32_t localid;
-		@try { localid=[fh readID]; }
-		@catch(id e) { break; }
+            uint32_t localid;
+            @try { localid=[fh readID]; }
+            @catch(id e) { break; }
 
-		switch(localid)
-		{
-			case 0x504b0304: // local record
-			case 0x504b0506: // kludge for strange archives
-			{
-				int extractversion=[fh readUInt16LE];
-				int flags=[fh readUInt16LE];
-				int compressionmethod=[fh readUInt16LE];
-				uint32_t date=[fh readUInt32LE];
-				uint32_t crc=[fh readUInt32LE];
-				off_t compsize=[fh readUInt32LE];
-				off_t uncompsize=[fh readUInt32LE];
-				int namelength=[fh readUInt16LE];
-				int extralength=[fh readUInt16LE];
+            switch(localid)
+            {
+                case 0x504b0304: // local record
+                case 0x504b0506: // kludge for strange archives
+                {
+                    int extractversion=[fh readUInt16LE];
+                    int flags=[fh readUInt16LE];
+                    int compressionmethod=[fh readUInt16LE];
+                    uint32_t date=[fh readUInt32LE];
+                    uint32_t crc=[fh readUInt32LE];
+                    off_t compsize=[fh readUInt32LE];
+                    off_t uncompsize=[fh readUInt32LE];
+                    int namelength=[fh readUInt16LE];
+                    int extralength=[fh readUInt16LE];
 
-				off_t dataoffset=[fh offsetInFile]+namelength+extralength;
+                    off_t dataoffset=[fh offsetInFile]+namelength+extralength;
 
-				NSData *namedata=nil;
-				if(namelength) namedata=[fh readDataOfLength:namelength];
+                    NSData *namedata=nil;
+                    if(namelength) namedata=[fh readDataOfLength:namelength];
 
-				NSDictionary *extradict=nil;
-				@try {
-					if(extralength) extradict=[self parseZipExtraWithLength:extralength nameData:namedata
-					uncompressedSizePointer:&uncompsize compressedSizePointer:&compsize];
-				} @catch(id e) {
-					[self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
-					NSLog(@"Error parsing Zip extra fields: %@",e);
-				}
+                    NSDictionary *extradict=nil;
+                    @try {
+                        if(extralength) extradict=[self parseZipExtraWithLength:extralength nameData:namedata
+                                                        uncompressedSizePointer:&uncompsize compressedSizePointer:&compsize];
+                    } @catch(id e) {
+                        [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
+                        NSLog(@"Error parsing Zip extra fields: %@",e);
+                    }
 
-				off_t next;
-				if(flags&0x08) // No size or CRC recorded
-				{
-					NSNumber *zip64num=[extradict objectForKey:@"Zip64"];
+                    off_t next;
+                    if(flags&0x08) // No size or CRC recorded
+                    {
+                        NSNumber *zip64num=[extradict objectForKey:@"Zip64"];
 
-					[self findEndOfStreamMarkerWithZip64Flag:zip64num&&[zip64num boolValue]
-					uncompressedSizePointer:&uncompsize compressedSizePointer:&compsize
-					CRCPointer:&crc];
+                        [self findEndOfStreamMarkerWithZip64Flag:zip64num&&[zip64num boolValue]
+                                         uncompressedSizePointer:&uncompsize compressedSizePointer:&compsize
+                                                      CRCPointer:&crc];
 
-					next=[fh offsetInFile];
-				}
-				else
-				{
-					next=dataoffset+compsize;
-				}
+                        next=[fh offsetInFile];
+                    }
+                    else
+                    {
+                        next=dataoffset+compsize;
+                    }
 
-				[self addZipEntryWithSystem:-1 extractVersion:extractversion flags:flags
-				compressionMethod:compressionmethod date:date crc:crc localDate:date
-				compressedSize:compsize uncompressedSize:uncompsize extendedFileAttributes:0xffffffff
-				extraDictionary:extradict dataOffset:dataoffset nameData:namedata commentData:nil
-				isLastEntry:NO];
+                    [self addZipEntryWithSystem:-1 extractVersion:extractversion flags:flags
+                              compressionMethod:compressionmethod date:date crc:crc localDate:date
+                                 compressedSize:compsize uncompressedSize:uncompsize extendedFileAttributes:0xffffffff
+                                extraDictionary:extradict dataOffset:dataoffset nameData:namedata commentData:nil
+                                    isLastEntry:NO];
 
-				[fh seekToFileOffset:next];
-			}
-			break;
+                    [fh seekToFileOffset:next];
+                }
+                    break;
 
-			case 0x504b0102: // central record - stop scanning
-				[pool release];
-				goto end;
-			break;
+                case 0x504b0102: // central record - stop scanning
+                    goto end;
+                    break;
 
-			case 0x504b0708: // multi
-			case 0x504b3030: // something strange
-				// Skip these mysterious entries
-				[self findNextEntry];
-			break;
+                case 0x504b0708: // multi
+                case 0x504b3030: // something strange
+                    // Skip these mysterious entries
+                    [self findNextEntry];
+                    break;
 
-			default:
-				// When encountering unknown data, mark as corrupt and try to recover
-				[self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
-				[self findNextEntry];
-			break;
-		}
+                default:
+                    // When encountering unknown data, mark as corrupt and try to recover
+                    [self setObject:[NSNumber numberWithBool:YES] forPropertyKey:XADIsCorruptedKey];
+                    [self findNextEntry];
+                    break;
+            }
 
-		[pool release];
+        }   // autorelease pool
 	}
 
 	end:
@@ -931,15 +929,13 @@ isLastEntry:(BOOL)islastentry
 
 -(void)rememberEntry:(NSMutableDictionary *)dict withName:(NSData *)namedata
 {
-	prevdict=[dict retain];
-	prevname=[namedata retain];
+	prevdict=dict;
+	prevname=namedata;
 }
 
 -(void)addRemeberedEntryAndForget
 {
 	[self addEntryWithDictionary:prevdict];
-	[prevdict release];
-	[prevname release];
 	prevdict=nil;
 	prevname=nil;
 }
@@ -984,9 +980,9 @@ isLastEntry:(BOOL)islastentry
 
 			if(version==2) wrapchecksum=YES;
 
-			fh=[[[XADWinZipAESHandle alloc] initWithHandle:fh length:compsize
-			password:[self encodedPassword] keyLength:keybytes] autorelease];
-		}
+            fh=[[XADWinZipAESHandle alloc] initWithHandle:fh length:compsize
+                                                 password:[self encodedPassword] keyLength:keybytes];
+        }
 		else
 		{
 			if(flags&0x40) [XADException raiseNotSupportedException];
@@ -995,8 +991,8 @@ isLastEntry:(BOOL)islastentry
 			if(flags&0x08) test=[[dict objectForKey:@"ZipLocalDate"] intValue]>>8;
 			else test=[[dict objectForKey:@"ZipCRC32"] unsignedIntValue]>>24;
 
-			fh=[[[XADZipCryptHandle alloc] initWithHandle:fh length:compsize
-			password:[self encodedPassword] testByte:test] autorelease];
+            fh=[[XADZipCryptHandle alloc] initWithHandle:fh length:compsize
+                                                 password:[self encodedPassword] testByte:test];
 		}
 	}
 
@@ -1007,14 +1003,14 @@ isLastEntry:(BOOL)islastentry
 	{
 		if(wrapchecksum)
 		{
-			return [[[CSChecksumWrapperHandle alloc] initWithHandle:handle checksumHandle:fh] autorelease];
+			return [[CSChecksumWrapperHandle alloc] initWithHandle:handle checksumHandle:fh];
 		}
 		else
 		{
 			NSNumber *crc=[dict objectForKey:@"ZipCRC32"];
-			return [XADCRCHandle IEEECRC32HandleWithHandle:handle
-			length:[handle fileSize] correctCRC:[crc unsignedIntValue] conditioned:YES];
-		}
+            return [XADCRCHandle IEEECRC32HandleWithHandle:handle
+                                                    length:[handle fileSize] correctCRC:[crc unsignedIntValue] conditioned:YES];
+        }
 	}
 
 	return handle;
@@ -1025,35 +1021,38 @@ isLastEntry:(BOOL)islastentry
 	switch(method)
 	{
 		case 0: return parent;
-		case 1: return [[[XADZipShrinkHandle alloc] initWithHandle:parent length:size] autorelease];
-		case 6: return [[[XADZipImplodeHandle alloc] initWithHandle:parent length:size
-						largeDictionary:flags&0x02 hasLiterals:flags&0x04] autorelease];
+		case 1: return [[XADZipShrinkHandle alloc] initWithHandle:parent length:size];
+        case 6: return [[XADZipImplodeHandle alloc] initWithHandle:parent length:size
+                                                   largeDictionary:flags&0x02 hasLiterals:flags&0x04];
 //		case 8: return [CSZlibHandle deflateHandleWithHandle:parent length:size];
 		// Leave out length, because some archivers don't bother writing zip64
 		// extensions for >4GB files, so size might be entirely wrong, and
 		// archivers are expected to just keep unarchving anyway.
 		case 8: return [CSZlibHandle deflateHandleWithHandle:parent];
 //		case 8: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size] autorelease];
-		case 9: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size variant:XADDeflate64DeflateVariant] autorelease];
+		case 9: return [[XADDeflateHandle alloc] initWithHandle:parent length:size variant:XADDeflate64DeflateVariant];
 		case 12: return [CSBzip2Handle bzip2HandleWithHandle:parent length:size];
 		case 14:
 		{
 			[parent skipBytes:2];
 			int len=[parent readUInt16LE];
 			NSData *props=[parent readDataOfLength:len];
-			return [[[XADLZMAHandle alloc] initWithHandle:parent length:size propertyData:props] autorelease];
+			return [[XADLZMAHandle alloc] initWithHandle:parent length:size propertyData:props];
 		}
 		break;
-		case 96: return [[[XADWinZipJPEGHandle alloc] initWithHandle:parent length:size] autorelease];
-		case 97: return [[[XADWinZipWavPackHandle alloc] initWithHandle:parent length:size] autorelease];
+		case 96: return [[XADWinZipJPEGHandle alloc] initWithHandle:parent length:size];
+		case 97: return [[XADWinZipWavPackHandle alloc] initWithHandle:parent length:size];
 		case 98:
 		{
 			uint16_t info=[parent readUInt16LE];
 			int maxorder=(info&0x0f)+1;
 			int suballocsize=(((info>>4)&0xff)+1)<<20;
 			int modelrestoration=info>>12;
-			return [[[XADPPMdVariantIHandle alloc] initWithHandle:parent length:size
-			maxOrder:maxorder subAllocSize:suballocsize modelRestorationMethod:modelrestoration] autorelease];
+            return [[XADPPMdVariantIHandle alloc] initWithHandle:parent
+                                                          length:size
+                                                        maxOrder:maxorder
+                                                    subAllocSize:suballocsize
+                                          modelRestorationMethod:modelrestoration];
 		}
 		break;
 		default:

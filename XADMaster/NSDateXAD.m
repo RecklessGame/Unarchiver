@@ -13,7 +13,7 @@
 hour:(int)hour minute:(int)minute second:(int)second timeZone:(NSTimeZone *)timezone
 {
 	#if MAC_OS_X_VERSION_MIN_REQUIRED>=1040
-	NSDateComponents *components=[[NSDateComponents new] autorelease];
+	NSDateComponents *components=[NSDateComponents new];
 	[components setYear:year];
 	[components setMonth:month];
 	[components setDay:day];
@@ -22,7 +22,7 @@ hour:(int)hour minute:(int)minute second:(int)second timeZone:(NSTimeZone *)time
 	[components setSecond:second];
 	if(timezone) [components setTimeZone:timezone];
 
-	NSCalendar *gregorian=[[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+	NSCalendar *gregorian=[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
 	return [gregorian dateFromComponents:components];
 	#else
 	return [NSCalendarDate dateWithYear:year month:month day:day hour:hour minute:minute second:second timeZone:nil];

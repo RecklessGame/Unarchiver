@@ -50,99 +50,99 @@ NSString *FigureOutPassword(NSString *filename)
 
 int main(int argc,char **argv)
 {
-	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+    @autoreleasepool {
 
-	if(argc==2)
-	{
-		cstr1=argv[1];
+        if(argc==2)
+        {
+            cstr1=argv[1];
 
-		NSString *filename=[NSString stringWithUTF8String:cstr1];
-		NSArray *locators=[filename componentsSeparatedByString:@":"];
-		CSHandle *fh=HandleForLocators(locators,NULL);
-		if(!fh)
-		{
-			fprintf(stderr,"Failed to open %s.\n",cstr1);
-			exit(1);
-		}
+            NSString *filename=[NSString stringWithUTF8String:cstr1];
+            NSArray *locators=[filename componentsSeparatedByString:@":"];
+            CSHandle *fh=HandleForLocators(locators,NULL);
+            if(!fh)
+            {
+                fprintf(stderr,"Failed to open %s.\n",cstr1);
+                exit(1);
+            }
 
-		off_t size=0;
-		while(![fh atEndOfFile])
-		{
-			uint8_t b=[fh readUInt8];
-			putc(b,stdout);
-			size++;
-		}
-		fflush(stdout);
+            off_t size=0;
+            while(![fh atEndOfFile])
+            {
+                uint8_t b=[fh readUInt8];
+                putc(b,stdout);
+                size++;
+            }
+            fflush(stdout);
 
-		fprintf(stderr,"\nRead %lld bytes from %s.\n",size,cstr1);
-	}
-	else if(argc==3)
-	{
-		cstr1=argv[1];
-		cstr2=argv[2];
+            fprintf(stderr,"\nRead %lld bytes from %s.\n",size,cstr1);
+        }
+        else if(argc==3)
+        {
+            cstr1=argv[1];
+            cstr2=argv[2];
 
-		NSString *filename1=[NSString stringWithUTF8String:cstr1];
-		NSArray *locators1=[filename1 componentsSeparatedByString:@":"];
-		CSHandle *fh=HandleForLocators(locators1,NULL);
-		if(!fh)
-		{
-			fprintf(stderr,"Failed to open %s.\n",cstr1);
-			exit(1);
-		}
+            NSString *filename1=[NSString stringWithUTF8String:cstr1];
+            NSArray *locators1=[filename1 componentsSeparatedByString:@":"];
+            CSHandle *fh=HandleForLocators(locators1,NULL);
+            if(!fh)
+            {
+                fprintf(stderr,"Failed to open %s.\n",cstr1);
+                exit(1);
+            }
 
-		NSString *filename2=[NSString stringWithUTF8String:cstr2];
-		NSArray *locators2=[filename2 componentsSeparatedByString:@":"];
-		if([locators2 count]>1)
-		{
-			correctbytes=NULL;
-			correcthandle=HandleForLocators(locators2,NULL);
-			if(!correcthandle)
-			{
-				fprintf(stderr,"Failed to open %s.\n",cstr2);
-				exit(1);
-			}
-		}
-		else
-		{
-			correcthandle=nil;
-			NSData *data=[NSData dataWithContentsOfMappedFile:filename2];
-			correctbytes=[data bytes];
-			correctlength=[data length];
-		}
+            NSString *filename2=[NSString stringWithUTF8String:cstr2];
+            NSArray *locators2=[filename2 componentsSeparatedByString:@":"];
+            if([locators2 count]>1)
+            {
+                correctbytes=NULL;
+                correcthandle=HandleForLocators(locators2,NULL);
+                if(!correcthandle)
+                {
+                    fprintf(stderr,"Failed to open %s.\n",cstr2);
+                    exit(1);
+                }
+            }
+            else
+            {
+                correcthandle=nil;
+                NSData *data=[NSData dataWithContentsOfMappedFile:filename2];
+                correctbytes=[data bytes];
+                correctlength=[data length];
+            }
 
-		if([fh isKindOfClass:[CSSubHandle class]])
-		{
-			correctoffset=[(CSSubHandle *)fh startOffsetInParent];
-		}
-		else
-		{
-			correctoffset=0;
-		}
+            if([fh isKindOfClass:[CSSubHandle class]])
+            {
+                correctoffset=[(CSSubHandle *)fh startOffsetInParent];
+            }
+            else
+            {
+                correctoffset=0;
+            }
 
-		off_t size=0;
-		while(![fh atEndOfFile])
-		{
-			uint8_t b=[fh readUInt8];
-			[XADTest testByte:b atOffset:size];
-			size++;
-		}
+            off_t size=0;
+            while(![fh atEndOfFile])
+            {
+                uint8_t b=[fh readUInt8];
+                [XADTest testByte:b atOffset:size];
+                size++;
+            }
 
-		if(correcthandle && ![correcthandle atEndOfFile])
-		{
-			fprintf(stderr,"%s ended before %s, after %lld bytes.\n",cstr1,cstr2,size);
-			exit(1);
-		}
+            if(correcthandle && ![correcthandle atEndOfFile])
+            {
+                fprintf(stderr,"%s ended before %s, after %lld bytes.\n",cstr1,cstr2,size);
+                exit(1);
+            }
 
-		fprintf(stderr,"Read %lld bytes from %s and %s, which are identical.\n",
-		size,cstr1,cstr2);
-	}
-	else
-	{
-		printf("Usage: %s file[:archiveentry[:...]] [comparefile[:archiveentry[:...]]]\n",argv[0]);
-		exit(1);
-	}
+            fprintf(stderr,"Read %lld bytes from %s and %s, which are identical.\n",
+                    size,cstr1,cstr2);
+        }
+        else
+        {
+            printf("Usage: %s file[:archiveentry[:...]] [comparefile[:archiveentry[:...]]]\n",argv[0]);
+            exit(1);
+        }
 
-	[pool release];
+    }   // autorelease pool 
 	
 	return 0;
 }
@@ -260,7 +260,7 @@ CSHandle *HandleForLocators(NSArray *locators,NSString **nameptr)
 {
 	[regex release];
 	[entry release];
-	[super dealloc];
+	
 }
 
 -(void)archiveParser:(XADArchiveParser *)parser foundEntryWithDictionary:(NSDictionary *)dict

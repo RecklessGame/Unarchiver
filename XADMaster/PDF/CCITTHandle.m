@@ -130,7 +130,7 @@ line=0;
 {
 	[whitecode release];
 	[blackcode release];
-	[super dealloc];
+	
 }
 
 -(void)startNewLine
@@ -206,7 +206,7 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int column,int
 	[blackcode release];
 	free(prevchanges);
 	free(currchanges);
-	[super dealloc];
+	
 }
 
 -(void)resetByteStream

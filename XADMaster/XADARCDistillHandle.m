@@ -44,7 +44,7 @@ static const int offsetcodes[0x40]=
 {
 	[maincode release];
 	[offsetcode release];
-	[super dealloc];
+	
 }
 
 static void BuildCodeFromTree(XADPrefixCode *code,int *tree,int node,int numnodes)

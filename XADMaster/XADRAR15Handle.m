@@ -180,7 +180,7 @@ static void ResetTable(int *table,int *reverse);
 	[shortmatchcode1 release];
 	[shortmatchcode2 release];
 	[shortmatchcode3 release];
-	[super dealloc];
+	
 }
 
 -(void)resetLZSSHandle

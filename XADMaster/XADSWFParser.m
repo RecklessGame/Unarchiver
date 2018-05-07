@@ -39,7 +39,7 @@
 {
 	[parser release];
 	[dataobjects release];
-	[super dealloc];
+	
 }
 
 -(void)parse

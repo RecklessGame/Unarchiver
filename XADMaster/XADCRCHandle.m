@@ -5,45 +5,45 @@
 +(XADCRCHandle *)IEEECRC32HandleWithHandle:(CSHandle *)handle
 correctCRC:(uint32_t)correctcrc conditioned:(BOOL)conditioned
 {
-	if(conditioned) return [[[self alloc] initWithHandle:handle length:CSHandleMaxLength initialCRC:0xffffffff
-	correctCRC:correctcrc^0xffffffff CRCTable:XADCRCTable_edb88320] autorelease];
-	else return [[[self alloc] initWithHandle:handle length:CSHandleMaxLength initialCRC:0
-	correctCRC:correctcrc CRCTable:XADCRCTable_edb88320] autorelease];
+    if(conditioned) return [[self alloc] initWithHandle:handle length:CSHandleMaxLength initialCRC:0xffffffff
+                                             correctCRC:correctcrc^0xffffffff CRCTable:XADCRCTable_edb88320];
+    else return [[self alloc] initWithHandle:handle length:CSHandleMaxLength initialCRC:0
+                                  correctCRC:correctcrc CRCTable:XADCRCTable_edb88320];
 }
 
 +(XADCRCHandle *)IEEECRC32HandleWithHandle:(CSHandle *)handle length:(off_t)length
-correctCRC:(uint32_t)correctcrc conditioned:(BOOL)conditioned
+                                correctCRC:(uint32_t)correctcrc conditioned:(BOOL)conditioned
 {
-	if(conditioned) return [[[self alloc] initWithHandle:handle length:length initialCRC:0xffffffff
-	correctCRC:correctcrc^0xffffffff CRCTable:XADCRCTable_edb88320] autorelease];
-	else return [[[self alloc] initWithHandle:handle length:length initialCRC:0
-	correctCRC:correctcrc CRCTable:XADCRCTable_edb88320] autorelease];
+    if(conditioned) return [[self alloc] initWithHandle:handle length:length initialCRC:0xffffffff
+                                             correctCRC:correctcrc^0xffffffff CRCTable:XADCRCTable_edb88320];
+    else return [[self alloc] initWithHandle:handle length:length initialCRC:0
+                                  correctCRC:correctcrc CRCTable:XADCRCTable_edb88320];
 }
 
 +(XADCRCHandle *)IBMCRC16HandleWithHandle:(CSHandle *)handle length:(off_t)length
 correctCRC:(uint32_t)correctcrc conditioned:(BOOL)conditioned
 {
-	if(conditioned) return [[[self alloc] initWithHandle:handle length:length initialCRC:0xffff
-	correctCRC:correctcrc^0xffff CRCTable:XADCRCTable_a001] autorelease];
-	else return [[[self alloc] initWithHandle:handle length:length initialCRC:0
-	correctCRC:correctcrc CRCTable:XADCRCTable_a001] autorelease];
+    if(conditioned) return [[self alloc] initWithHandle:handle length:length initialCRC:0xffff
+                                             correctCRC:correctcrc^0xffff CRCTable:XADCRCTable_a001];
+    else return [[self alloc] initWithHandle:handle length:length initialCRC:0
+                                  correctCRC:correctcrc CRCTable:XADCRCTable_a001];
 }
 
 +(XADCRCHandle *)CCITTCRC16HandleWithHandle:(CSHandle *)handle length:(off_t)length
 correctCRC:(uint32_t)correctcrc conditioned:(BOOL)conditioned
 {
-	if(conditioned) return [[[self alloc] initWithHandle:handle length:length initialCRC:0xffff
-	correctCRC:XADUnReverseCRC16(correctcrc)^0xffff CRCTable:XADCRCReverseTable_1021] autorelease];
-	else return [[[self alloc] initWithHandle:handle length:length initialCRC:0
-	correctCRC:XADUnReverseCRC16(correctcrc) CRCTable:XADCRCReverseTable_1021] autorelease];
+    if(conditioned) return [[self alloc] initWithHandle:handle length:length initialCRC:0xffff
+                                             correctCRC:XADUnReverseCRC16(correctcrc)^0xffff CRCTable:XADCRCReverseTable_1021];
+    else return [[self alloc] initWithHandle:handle length:length initialCRC:0
+                                  correctCRC:XADUnReverseCRC16(correctcrc) CRCTable:XADCRCReverseTable_1021];
 }
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length initialCRC:(uint32_t)initialcrc
-correctCRC:(uint32_t)correctcrc CRCTable:(const uint32_t *)crctable
+         correctCRC:(uint32_t)correctcrc CRCTable:(const uint32_t *)crctable
 {
 	if((self=[super initWithName:[handle name] length:length]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		crc=initcrc=initialcrc;
 		compcrc=correctcrc;
 		table=crctable;
@@ -55,8 +55,8 @@ correctCRC:(uint32_t)correctcrc CRCTable:(const uint32_t *)crctable
 
 -(void)dealloc
 {
-	[parent release];
-	[super dealloc];
+    parent = nil;
+	
 }
 
 -(void)setCRCTransformationFunction:(XADCRCTransformationFunction *)function context:(void *)context

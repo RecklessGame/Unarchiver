@@ -37,7 +37,7 @@
 	[vm release];
 	[filtercode release];
 	[stack release];
-	[super dealloc];
+	
 }
 
 -(void)resetBlockStream

@@ -16,7 +16,7 @@
 {
 	[parent release];
 	[digest release];
-	[super dealloc];
+	
 }
 
 -(void)resetStream

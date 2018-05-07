@@ -15,9 +15,8 @@
 
 -(void)dealloc
 {
-	[literalcode release];
-	[distancecode release];
-	[super dealloc];
+    literalcode = nil;
+    distancecode = nil;
 }
 
 -(void)resetLZSSHandle

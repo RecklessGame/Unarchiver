@@ -22,9 +22,9 @@ NSString *XADExceptionName=@"XADException";
 +(void)raiseExceptionWithXADError:(XADError)errnum
 {
 //	[NSException raise:@"XADException" format:@"%@",[self describeXADError:errnum]];
-	[[[[NSException alloc] initWithName:XADExceptionName reason:[self describeXADError:errnum]
-	userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:errnum]
-	forKey:@"XADError"]] autorelease] raise];
+    [[[NSException alloc] initWithName:XADExceptionName reason:[self describeXADError:errnum]
+                              userInfo:@{@"XADError":@(errnum)}]
+     raise];
 }
 
 

@@ -37,7 +37,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 -(void)dealloc
 {
 	//CleanupRARVirutalMachine(&vm);
-	[super dealloc];
+	
 }
 
 -(uint8_t *)memory { return vm.memory; }
@@ -111,7 +111,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 	[opcodes release];
 	[staticdata release];
 	[globalbackup release];
-	[super dealloc];
+	
 }
 
 -(BOOL)parseByteCode:(const uint8_t *)bytes length:(int)length
@@ -312,7 +312,7 @@ value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isRelativeJump:(BOOL)isrel cu
 {
 	[programcode release];
 	[globaldata release];
-	[super dealloc];
+	
 }
 
 -(XADRARProgramCode *)programCode { return programcode; }

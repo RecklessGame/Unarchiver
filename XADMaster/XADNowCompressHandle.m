@@ -32,7 +32,7 @@ static void WordAlign(uint8_t *start,uint8_t **curr);
 {
 	free(blocks);
 	[parent release];
-	[super dealloc];
+	
 }
 
 -(void)resetBlockStream

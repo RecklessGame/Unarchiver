@@ -13,13 +13,11 @@
 
 -(void)dealloc
 {
-	[code release];
-	[super dealloc];
+    code = nil;
 }
 
 -(void)resetByteStream
 {
-	[code release];
 	code=[XADPrefixCode new];
 
 	[code startBuildingTree];

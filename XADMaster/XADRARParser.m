@@ -158,14 +158,13 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 
 -(void)dealloc
 {
-	[keys release];
-	[super dealloc];
+    keys = nil;
+	
 }
 
 -(void)setPassword:(NSString *)newpassword
 {
 	// Make sure to clear key cache if password changes.
-	[keys release];
 	keys=nil;
 	[super setPassword:newpassword];
 }
@@ -462,7 +461,7 @@ static const uint8_t *FindSignature(const uint8_t *ptr,int length)
 	if(archiveflags&MHD_PASSWORD)
 	{
 		NSData *salt=[fh readDataOfLength:8];
-		fh=[[[XADRARAESHandle alloc] initWithHandle:fh key:[self keyForSalt:salt]] autorelease];
+		fh=[[XADRARAESHandle alloc] initWithHandle:fh key:[self keyForSalt:salt]];
 	}
 
 	block.fh=fh;
@@ -700,15 +699,15 @@ isCorrupted:(BOOL)iscorrupted
 	switch(version)
 	{
 		case 15:
-			return [[[XADRAR15Handle alloc] initWithRARParser:self files:obj] autorelease];
+			return [[XADRAR15Handle alloc] initWithRARParser:self files:obj];
 
 		case 20:
 		case 26:
-			return [[[XADRAR20Handle alloc] initWithRARParser:self files:obj] autorelease];
+			return [[XADRAR20Handle alloc] initWithRARParser:self files:obj];
 
 		case 29:
 		case 36:
-			return [[[XADRAR30Handle alloc] initWithRARParser:self files:obj] autorelease];
+			return [[XADRAR30Handle alloc] initWithRARParser:self files:obj];
 
 		default:
 			return nil;
@@ -739,23 +738,23 @@ isCorrupted:(BOOL)iscorrupted
 -(CSHandle *)inputHandleWithParts:(NSArray *)parts encrypted:(BOOL)encrypted
 cryptoVersion:(int)version salt:(NSData *)salt
 {
-	CSHandle *handle=[[[XADRARInputHandle alloc] initWithHandle:[self handle] parts:parts] autorelease];
+	CSHandle *handle=[[XADRARInputHandle alloc] initWithHandle:[self handle] parts:parts];
 
 	if(encrypted)
 	{
 		switch(version)
 		{
-			case 13: return [[[XADRAR13CryptHandle alloc] initWithHandle:handle
-			length:[handle fileSize] password:[self encodedPassword]] autorelease];
+            case 13: return [[XADRAR13CryptHandle alloc] initWithHandle:handle
+                                                                 length:[handle fileSize] password:[self encodedPassword]];
 
-			case 15: return [[[XADRAR15CryptHandle alloc] initWithHandle:handle
-			length:[handle fileSize] password:[self encodedPassword]] autorelease];
+            case 15: return [[XADRAR15CryptHandle alloc] initWithHandle:handle
+                                                                 length:[handle fileSize] password:[self encodedPassword]];
 
-			case 20: return [[[XADRAR20CryptHandle alloc] initWithHandle:handle
-			length:[handle fileSize] password:[self encodedPassword]] autorelease];
+            case 20: return [[XADRAR20CryptHandle alloc] initWithHandle:handle
+                                                                 length:[handle fileSize] password:[self encodedPassword]];
 
-			default: return [[[XADRARAESHandle alloc] initWithHandle:handle
-			length:[handle fileSize] key:[self keyForSalt:salt]] autorelease];
+            default: return [[XADRARAESHandle alloc] initWithHandle:handle
+                                                             length:[handle fileSize] key:[self keyForSalt:salt]];
 		}
 	}
 	else return handle;

@@ -153,7 +153,7 @@ separators:(const char *)pathseparators
 	[parent release];
 	[cachedcanonicalcomponents release];
 	[cachedencoding release];
-	[super dealloc];
+	
 }
 
 
@@ -677,7 +677,7 @@ separators:(const char *)pathseparators
 -(void)dealloc
 {
 	[string release];
-	[super dealloc];
+	
 }
 
 -(BOOL)_isPartAbsolute
@@ -789,7 +789,7 @@ separators:(const char *)pathseparators parent:(XADPath *)parentpath
 {
 	[data release];
 	[source release];
-	[super dealloc];
+	
 }
 
 

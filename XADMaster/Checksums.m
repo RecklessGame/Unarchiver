@@ -55,17 +55,16 @@
 {
 	if((self=[super initWithName:[handle name]]))
 	{
-		parent=[handle retain];
-		checksum=[checksumhandle retain];
+		parent=handle;
+		checksum=checksumhandle;
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[parent release];
-	[checksum release];
-	[super dealloc];
+    parent = nil;
+    checksum = nil;
 }
 
 -(off_t)fileSize { return [parent fileSize]; }

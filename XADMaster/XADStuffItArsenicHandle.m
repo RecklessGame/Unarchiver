@@ -119,7 +119,7 @@ static int NextArithmeticBitString(ArithmeticDecoder *decoder,ArithmeticModel *m
 {
 	free(block);
 	free(transform);
-	[super dealloc];
+	
 }
 
 -(void)resetByteStream

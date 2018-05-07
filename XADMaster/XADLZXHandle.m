@@ -17,7 +17,7 @@
 {
 	[maincode release];
 	[offsetcode release];
-	[super dealloc];
+	
 }
 
 -(void)resetLZSSHandle

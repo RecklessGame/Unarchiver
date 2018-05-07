@@ -47,7 +47,7 @@
 	[destination release];
 	[deferreddirectories release];
 	[deferredlinks release];
-	[super dealloc];
+	
 }
 
 -(XADArchiveParser *)archiveParser { return parser; }
@@ -141,132 +141,132 @@
 
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict as:(NSString *)path forceDirectories:(BOOL)force
 {
-	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+    @autoreleasepool {
 
-	NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
-	NSNumber *linknum=[dict objectForKey:XADIsLinkKey];
-	NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
-	NSNumber *archivenum=[dict objectForKey:XADIsArchiveKey];
-	BOOL isdir=dirnum&&[dirnum boolValue];
-	BOOL islink=linknum&&[linknum boolValue];
-	BOOL isres=resnum&&[resnum boolValue];
-	BOOL isarchive=archivenum&&[archivenum boolValue];
+        NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
+        NSNumber *linknum=[dict objectForKey:XADIsLinkKey];
+        NSNumber *resnum=[dict objectForKey:XADIsResourceForkKey];
+        NSNumber *archivenum=[dict objectForKey:XADIsArchiveKey];
+        BOOL isdir=dirnum&&[dirnum boolValue];
+        BOOL islink=linknum&&[linknum boolValue];
+        BOOL isres=resnum&&[resnum boolValue];
+        BOOL isarchive=archivenum&&[archivenum boolValue];
 
-	// If we were not given a path, pick one ourselves.
-	if(!path)
-	{
-		XADPath *name=[dict objectForKey:XADFileNameKey];
-		NSString *namestring=[name sanitizedPathString];
+        // If we were not given a path, pick one ourselves.
+        if(!path)
+        {
+            XADPath *name=[dict objectForKey:XADFileNameKey];
+            NSString *namestring=[name sanitizedPathString];
 
-		if(destination) path=[destination stringByAppendingPathComponent:namestring];
-		else path=namestring;
+            if(destination) path=[destination stringByAppendingPathComponent:namestring];
+            else path=namestring;
 
-		// Adjust path for resource forks.
-		path=[self adjustPathString:path forEntryWithDictionary:dict];
-	}
+            // Adjust path for resource forks.
+            path=[self adjustPathString:path forEntryWithDictionary:dict];
+        }
 
-	// Ask for permission and possibly a path, and report that we are starting.
-	if(delegate)
-	{
-		if(![delegate unarchiver:self shouldExtractEntryWithDictionary:dict suggestedPath:&path])
-		{
-			[pool release];
-			return XADNoError;
-		}
-		[delegate unarchiver:self willExtractEntryWithDictionary:dict to:path];
-	}
+        // Ask for permission and possibly a path, and report that we are starting.
+        if(delegate)
+        {
+            if(![delegate unarchiver:self shouldExtractEntryWithDictionary:dict suggestedPath:&path])
+            {
+                [pool release];
+                return XADNoError;
+            }
+            [delegate unarchiver:self willExtractEntryWithDictionary:dict to:path];
+        }
 
-	XADError error;
-	
-	error=[self _ensureDirectoryExists:[path stringByDeletingLastPathComponent]];
-	if(error) goto end;
+        XADError error;
 
-	// Attempt to extract embedded archives if requested.
-	if(isarchive&&delegate)
-	{
-		NSString *unarchiverpath=[path stringByDeletingLastPathComponent];
+        error=[self _ensureDirectoryExists:[path stringByDeletingLastPathComponent]];
+        if(error) goto end;
 
-		if([delegate unarchiver:self shouldExtractArchiveEntryWithDictionary:dict to:unarchiverpath])
-		{
-			error=[self _extractArchiveEntryWithDictionary:dict to:unarchiverpath name:[path lastPathComponent]];
-			// If extraction was attempted, and succeeded for failed, skip everything else.
-			// Otherwise, if the archive couldn't be opened, fall through and extract normally.
-			if(error!=XADSubArchiveError) goto end;
-		}
-	}
+        // Attempt to extract embedded archives if requested.
+        if(isarchive&&delegate)
+        {
+            NSString *unarchiverpath=[path stringByDeletingLastPathComponent];
 
-	// Extract normally.
-	if(isres)
-	{
-		switch(forkstyle)
-		{
-			case XADIgnoredForkStyle:
-			break;
+            if([delegate unarchiver:self shouldExtractArchiveEntryWithDictionary:dict to:unarchiverpath])
+            {
+                error=[self _extractArchiveEntryWithDictionary:dict to:unarchiverpath name:[path lastPathComponent]];
+                // If extraction was attempted, and succeeded for failed, skip everything else.
+                // Otherwise, if the archive couldn't be opened, fall through and extract normally.
+                if(error!=XADSubArchiveError) goto end;
+            }
+        }
 
-			case XADMacOSXForkStyle:
-				if(!isdir)
-				error=[XADPlatform extractResourceForkEntryWithDictionary:dict unarchiver:self toPath:path];
-			break;
+        // Extract normally.
+        if(isres)
+        {
+            switch(forkstyle)
+            {
+                case XADIgnoredForkStyle:
+                    break;
 
-			case XADHiddenAppleDoubleForkStyle:
-			case XADVisibleAppleDoubleForkStyle:
-				error=[self _extractResourceForkEntryWithDictionary:dict asAppleDoubleFile:path];
-			break;
+                case XADMacOSXForkStyle:
+                    if(!isdir)
+                        error=[XADPlatform extractResourceForkEntryWithDictionary:dict unarchiver:self toPath:path];
+                    break;
 
-			case XADHFVExplorerAppleDoubleForkStyle:
-				// We need to make sure there is an empty file for the data fork in all
-				// cases, so just try to recover the original filename and create an empty
-				// file there in case one doesn't exist, and this isn't a directory.
-				// Kludge in the same file attributes as the resource fork. If there is
-				// an actual data fork later, it will overwrite this file. There special-case
-				// code to avoid collision warnings.
-				if(![[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:NULL] && !isdir)
-				{
-					NSString *dirpart=[path stringByDeletingLastPathComponent];
-					NSString *namepart=[path lastPathComponent];
-					if([namepart hasPrefix:@"%"])
-					{
-						NSString *originalname=[namepart substringFromIndex:1];
-						NSString *datapath=[dirpart stringByAppendingPathComponent:originalname];
-						[[NSData data] writeToFile:datapath atomically:NO];
-						[self _updateFileAttributesAtPath:datapath forEntryWithDictionary:dict deferDirectories:!force];
-					}
-				}
-				error=[self _extractResourceForkEntryWithDictionary:dict asAppleDoubleFile:path];
-			break;
+                case XADHiddenAppleDoubleForkStyle:
+                case XADVisibleAppleDoubleForkStyle:
+                    error=[self _extractResourceForkEntryWithDictionary:dict asAppleDoubleFile:path];
+                    break;
 
-			default:
-				// TODO: better error
-				error=XADBadParametersError;
-			break;
-		}
-	}
-	else if(isdir)
-	{
-		error=[self _extractDirectoryEntryWithDictionary:dict as:path];
-	}
-	else if(islink)
-	{
-		error=[self _extractLinkEntryWithDictionary:dict as:path];
-	}
-	else
-	{
-		error=[self _extractFileEntryWithDictionary:dict as:path];
-	}
+                case XADHFVExplorerAppleDoubleForkStyle:
+                    // We need to make sure there is an empty file for the data fork in all
+                    // cases, so just try to recover the original filename and create an empty
+                    // file there in case one doesn't exist, and this isn't a directory.
+                    // Kludge in the same file attributes as the resource fork. If there is
+                    // an actual data fork later, it will overwrite this file. There special-case
+                    // code to avoid collision warnings.
+                    if(![[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:NULL] && !isdir)
+                    {
+                        NSString *dirpart=[path stringByDeletingLastPathComponent];
+                        NSString *namepart=[path lastPathComponent];
+                        if([namepart hasPrefix:@"%"])
+                        {
+                            NSString *originalname=[namepart substringFromIndex:1];
+                            NSString *datapath=[dirpart stringByAppendingPathComponent:originalname];
+                            [[NSData data] writeToFile:datapath atomically:NO];
+                            [self _updateFileAttributesAtPath:datapath forEntryWithDictionary:dict deferDirectories:!force];
+                        }
+                    }
+                    error=[self _extractResourceForkEntryWithDictionary:dict asAppleDoubleFile:path];
+                    break;
 
-	if(!error)
-	{
-		error=[self _updateFileAttributesAtPath:path forEntryWithDictionary:dict deferDirectories:!force];
-	}
+                default:
+                    // TODO: better error
+                    error=XADBadParametersError;
+                    break;
+            }
+        }
+        else if(isdir)
+        {
+            error=[self _extractDirectoryEntryWithDictionary:dict as:path];
+        }
+        else if(islink)
+        {
+            error=[self _extractLinkEntryWithDictionary:dict as:path];
+        }
+        else
+        {
+            error=[self _extractFileEntryWithDictionary:dict as:path];
+        }
 
-	// Report success or failure
-	end:
-	if(delegate)
-	{
-		[delegate unarchiver:self didExtractEntryWithDictionary:dict to:path error:error];
-	}
+        if(!error)
+        {
+            error=[self _updateFileAttributesAtPath:path forEntryWithDictionary:dict deferDirectories:!force];
+        }
 
-	[pool release];
+        // Report success or failure
+    end:
+        if(delegate)
+        {
+            [delegate unarchiver:self didExtractEntryWithDictionary:dict to:path error:error];
+        }
+
+    }
 
 	return error;
 }

@@ -59,9 +59,9 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 	xadFreeInfo(xmb,archive); // check?
 	xadFreeObjectA(xmb,archive,NULL);
 
-	[namedata release];
+    namedata = nil;
 
-	[super dealloc];
+	
 }
 
 -(void)parse
@@ -80,7 +80,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 	inhook.h_Data=(void *)&indata;
 
 	progresshook.h_Entry=ProgressFunc;
-	progresshook.h_Data=(void *)self;
+	progresshook.h_Data=(__bridge void *)self;
 
 	addonbuild=YES;
 	numfilesadded=0;
@@ -270,7 +270,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 
 		struct Hook outhook;
 		outhook.h_Entry=OutFunc;
-		outhook.h_Data=(void *)data;
+		outhook.h_Data=(__bridge void *)data;
 
 		err=xadFileUnArc(xmb,archive,
 			XAD_ENTRYNUMBER,info->xfi_EntryNumber,
@@ -286,7 +286,7 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 
 		struct Hook outhook;
 		outhook.h_Entry=OutFunc;
-		outhook.h_Data=(void *)data;
+		outhook.h_Data=(__bridge void *)data;
 
 		err=xadDiskUnArc(xmb,archive,
 			XAD_ENTRYNUMBER,info->xdi_EntryNumber,
@@ -294,17 +294,15 @@ struct xadMasterBaseP *xadOpenLibrary(xadINT32 version);
 		TAG_DONE);
 	}
 
-	return [[[XADLibXADMemoryHandle alloc] initWithData:data
-	successfullyExtracted:err==XADERR_OK] autorelease];
+    return [[XADLibXADMemoryHandle alloc] initWithData:data
+                                 successfullyExtracted:err==XADERR_OK];
 }
 
 -(NSString *)formatName
 {
 	if(!archive->xaip_ArchiveInfo.xai_Client) return @"libxad";
-
-	NSString *format=[[[NSString alloc] initWithBytes:archive->xaip_ArchiveInfo.xai_Client->xc_ArchiverName
-	length:strlen(archive->xaip_ArchiveInfo.xai_Client->xc_ArchiverName) encoding:NSISOLatin1StringEncoding] autorelease];
-	return format;
+    return [[NSString alloc] initWithBytes:archive->xaip_ArchiveInfo.xai_Client->xc_ArchiverName
+                                    length:strlen(archive->xaip_ArchiveInfo.xai_Client->xc_ArchiverName) encoding:NSISOLatin1StringEncoding];
 }
 
 
@@ -370,7 +368,7 @@ static xadUINT32 InFunc(struct Hook *hook,xadPTR object,struct xadHookParam *par
 
 static xadUINT32 ProgressFunc(struct Hook *hook,xadPTR object,struct xadProgressInfo *info)
 {
-	XADLibXADParser *parser=(XADLibXADParser *)hook->h_Data;
+	XADLibXADParser *parser=(__bridge XADLibXADParser *)hook->h_Data;
 
 	switch(info->xpi_Mode)
 	{
@@ -394,7 +392,7 @@ static xadUINT32 ProgressFunc(struct Hook *hook,xadPTR object,struct xadProgress
 
 static xadUINT32 OutFunc(struct Hook *hook,xadPTR object,struct xadHookParam *param)
 {
-	NSMutableData *data=(NSMutableData *)hook->h_Data;
+	NSMutableData *data=(__bridge NSMutableData *)hook->h_Data;
 
 	switch(param->xhp_Command)
 	{

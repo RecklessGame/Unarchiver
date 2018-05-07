@@ -21,7 +21,7 @@
 	[parent release];
 	[key release];
 	[rc4 release];
-	[super dealloc];
+	
 }
 
 -(void)resetStream

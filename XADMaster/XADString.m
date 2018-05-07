@@ -55,7 +55,7 @@ static BOOL IsDataASCII(NSData *data);
 
 +(XADString *)XADStringWithString:(NSString *)string
 {
-	return [[[self alloc] initWithString:string] autorelease];
+    return [[self alloc] initWithString:string];
 }
 
 +(XADString *)analyzedXADStringWithData:(NSData *)bytedata source:(XADStringSource *)stringsource
@@ -68,14 +68,14 @@ static BOOL IsDataASCII(NSData *data);
 	}
 	else
 	{
-		return [[[self alloc] initWithData:bytedata source:stringsource] autorelease];
+		return [[self alloc] initWithData:bytedata source:stringsource];
 	}
 }
 
 +(XADString *)decodedXADStringWithData:(NSData *)bytedata encodingName:(NSString *)encoding
 {
 	NSString *string=[XADString stringForData:bytedata encodingName:encoding];
-	return [[[self alloc] initWithString:string] autorelease];
+	return [[self alloc] initWithString:string];
 }
 
 
@@ -147,9 +147,9 @@ encodingName:(NSString *)encoding
 {
 	if((self=[super init]))
 	{
-		data=[bytedata retain];
+		data=bytedata;
 		string=nil;
-		source=[stringsource retain];
+		source=stringsource;
 	}
 	return self;
 }
@@ -158,7 +158,7 @@ encodingName:(NSString *)encoding
 {
 	if((self=[super init]))
 	{
-		string=[knownstring retain];
+		string=knownstring;
 		data=nil;
 		source=nil;
 	}
@@ -167,10 +167,9 @@ encodingName:(NSString *)encoding
 
 -(void)dealloc
 {
-	[data release];
-	[string release];
-	[source release];
-	[super dealloc];
+    data = nil;
+    string = nil;
+    source = nil;
 }
 
 
@@ -245,16 +244,11 @@ encodingName:(NSString *)encoding
 {
 	if(string)
 	{
-		return [[[XADString alloc]
-		initWithString:[string substringFromIndex:length]]
-		autorelease];
+        return [[XADString alloc] initWithString:[string substringFromIndex:length]];
 	}
 	else
 	{
-		return [[[XADString alloc]
-		initWithData:[data subdataWithRange:
-		NSMakeRange(length,[data length]-length)]
-		source:source] autorelease];
+        return [[XADString alloc] initWithData:[data subdataWithRange:NSMakeRange(length,[data length]-length)] source:source];
 	}
 }
 
@@ -335,9 +329,8 @@ encodingName:(NSString *)encoding
 
 -(void)dealloc
 {
-	[detector release];
-	[fixedencodingname release];
-	[super dealloc];
+    detector = nil;
+    fixedencodingname = nil;
 }
 
 -(void)analyzeData:(NSData *)data
@@ -389,8 +382,7 @@ encodingName:(NSString *)encoding
 
 -(void)setFixedEncodingName:(NSString *)encoding
 {
-	[fixedencodingname autorelease];
-	fixedencodingname=[encoding retain];
+	fixedencodingname=encoding;
 }
 
 -(BOOL)hasFixedEncoding

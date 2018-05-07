@@ -10,7 +10,7 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 	long count=[handlearray count];
 	if(count==0) return nil;
 	else if(count==1) return [handlearray objectAtIndex:0];
-	else return [[[self alloc] initWithHandles:handlearray] autorelease];
+	else return [[self alloc] initWithHandles:handlearray];
 }
 
 +(CSMultiHandle *)multiHandleWithHandles:(CSHandle *)firsthandle,...
@@ -46,9 +46,9 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 		NSMutableArray *handlearray=[NSMutableArray arrayWithCapacity:[other->handles count]];
 		NSEnumerator *enumerator=[other->handles objectEnumerator];
 		CSHandle *handle;
-		while((handle=[enumerator nextObject])) [handlearray addObject:[[handle copy] autorelease]];
+		while((handle=[enumerator nextObject])) [handlearray addObject:handle];
 
-		handles=[[NSArray arrayWithArray:handlearray] retain];
+		handles=[NSArray arrayWithArray:handlearray];
 		currhandle=other->currhandle;
 	}
 	return self;
@@ -56,8 +56,7 @@ NSString *CSSizeOfSegmentUnknownException=@"CSSizeOfSegmentUnknownException";
 
 -(void)dealloc
 {
-	[handles release];
-	[super dealloc];
+    handles = nil;
 }
 
 -(NSArray *)handles { return handles; }

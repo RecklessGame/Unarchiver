@@ -37,7 +37,7 @@ static void UpdateQuantumModel(QuantumModel *model,int index);
 -(void)dealloc
 {
 	CleanupLZSS(&lzss);
-	[super dealloc];
+	
 }
 
 -(void)resetCABBlockHandle

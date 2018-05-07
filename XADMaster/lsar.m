@@ -32,354 +32,354 @@ int passed,failed,unknown;
 
 int main(int argc,const char **argv)
 {
-	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+    @autoreleasepool {
 
-	CSCommandLineParser *cmdline=[[CSCommandLineParser new] autorelease];
+        CSCommandLineParser *cmdline=[[CSCommandLineParser new] autorelease];
 
-	[cmdline setUsageHeader:
-	@"lsar " VERSION_STRING @" (" @__DATE__ @"), a tool for listing the contents of archive files.\n"
-	@"Usage: lsar [options] archive [files ...]\n"
-	@"\n"
-	@"Available options:\n"];
+        [cmdline setUsageHeader:
+         @"lsar " VERSION_STRING @" (" @__DATE__ @"), a tool for listing the contents of archive files.\n"
+         @"Usage: lsar [options] archive [files ...]\n"
+         @"\n"
+         @"Available options:\n"];
 
-	[cmdline setProgramVersion:VERSION_STRING];
+        [cmdline setProgramVersion:VERSION_STRING];
 
-	[cmdline addSwitchOption:@"long" description:
-	@"Print more information about each file in the archive."];
-	[cmdline addAlias:@"l" forOption:@"long"];
+        [cmdline addSwitchOption:@"long" description:
+         @"Print more information about each file in the archive."];
+        [cmdline addAlias:@"l" forOption:@"long"];
 
-	[cmdline addSwitchOption:@"verylong" description:
-	@"Print all available information about each file in the archive."];
-	[cmdline addAlias:@"L" forOption:@"verylong"];
+        [cmdline addSwitchOption:@"verylong" description:
+         @"Print all available information about each file in the archive."];
+        [cmdline addAlias:@"L" forOption:@"verylong"];
 
-	[cmdline addSwitchOption:@"test" description:
-	@"Test the integrity of the files in the archive, if possible."];
-	[cmdline addAlias:@"t" forOption:@"test"];
+        [cmdline addSwitchOption:@"test" description:
+         @"Test the integrity of the files in the archive, if possible."];
+        [cmdline addAlias:@"t" forOption:@"test"];
 
-	[cmdline addStringOption:@"password" description:
-	@"The password to use for decrypting protected archives."];
-	[cmdline addAlias:@"p" forOption:@"password"];
+        [cmdline addStringOption:@"password" description:
+         @"The password to use for decrypting protected archives."];
+        [cmdline addAlias:@"p" forOption:@"password"];
 
-	[cmdline addStringOption:@"encoding" description:
-	@"The encoding to use for filenames in the archive, when it is not known. "
-	@"If not specified, the program attempts to auto-detect the encoding used. "
-	@"Use \"help\" or \"list\" as the argument to give a listing of all supported encodings."
-	argumentDescription:@"encoding name"];
-	[cmdline addAlias:@"e" forOption:@"encoding"];
+        [cmdline addStringOption:@"encoding" description:
+         @"The encoding to use for filenames in the archive, when it is not known. "
+         @"If not specified, the program attempts to auto-detect the encoding used. "
+         @"Use \"help\" or \"list\" as the argument to give a listing of all supported encodings."
+             argumentDescription:@"encoding name"];
+        [cmdline addAlias:@"e" forOption:@"encoding"];
 
-	[cmdline addStringOption:@"password-encoding" description:
-	@"The encoding to use for the password for the archive, when it is not known. "
-	@"If not specified, then either the encoding given by the -encoding option "
-	@"or the auto-detected encoding is used."
-	argumentDescription:@"name"];
-	[cmdline addAlias:@"E" forOption:@"password-encoding"];
+        [cmdline addStringOption:@"password-encoding" description:
+         @"The encoding to use for the password for the archive, when it is not known. "
+         @"If not specified, then either the encoding given by the -encoding option "
+         @"or the auto-detected encoding is used."
+             argumentDescription:@"name"];
+        [cmdline addAlias:@"E" forOption:@"password-encoding"];
 
-	[cmdline addSwitchOption:@"print-encoding" description:
-	@"Print the auto-detected encoding and the confidence factor after the file list"];
-	[cmdline addAlias:@"pe" forOption:@"print-encoding"];
+        [cmdline addSwitchOption:@"print-encoding" description:
+         @"Print the auto-detected encoding and the confidence factor after the file list"];
+        [cmdline addAlias:@"pe" forOption:@"print-encoding"];
 
-	[cmdline addSwitchOption:@"indexes" description:
-	@"Instead of specifying the files to list as filenames or wildcard patterns, "
-	@"specify them as indexes."];
-	[cmdline addAlias:@"i" forOption:@"indexes"];
+        [cmdline addSwitchOption:@"indexes" description:
+         @"Instead of specifying the files to list as filenames or wildcard patterns, "
+         @"specify them as indexes."];
+        [cmdline addAlias:@"i" forOption:@"indexes"];
 
-	[cmdline addSwitchOption:@"json" description:
-	@"Print the listing in JSON format."];
-	[cmdline addAlias:@"j" forOption:@"json"];
+        [cmdline addSwitchOption:@"json" description:
+         @"Print the listing in JSON format."];
+        [cmdline addAlias:@"j" forOption:@"json"];
 
-	[cmdline addSwitchOption:@"json-ascii" description:
-	@"Print the listing in JSON format, encoded as pure ASCII text."];
-	[cmdline addAlias:@"ja" forOption:@"json-ascii"];
+        [cmdline addSwitchOption:@"json-ascii" description:
+         @"Print the listing in JSON format, encoded as pure ASCII text."];
+        [cmdline addAlias:@"ja" forOption:@"json-ascii"];
 
-	[cmdline addSwitchOption:@"no-recursion" description:
-	@"Do not attempt to list archives contained in other archives. For instance, "
-	@"when unpacking a .tar.gz file, only list the .gz file and not its contents."];
-	[cmdline addAlias:@"nr" forOption:@"no-recursion"];
+        [cmdline addSwitchOption:@"no-recursion" description:
+         @"Do not attempt to list archives contained in other archives. For instance, "
+         @"when unpacking a .tar.gz file, only list the .gz file and not its contents."];
+        [cmdline addAlias:@"nr" forOption:@"no-recursion"];
 
-	[cmdline addHelpOption];
+        [cmdline addHelpOption];
 
-	[cmdline addVersionOption];
-	
-	if(![cmdline parseCommandLineWithArgc:argc argv:argv]) return 1;
+        [cmdline addVersionOption];
 
-
+        if(![cmdline parseCommandLineWithArgc:argc argv:argv]) return 1;
 
 
-	longformat=[cmdline boolValueForOption:@"long"];
-	verylongformat=[cmdline boolValueForOption:@"verylong"];
-	test=[cmdline boolValueForOption:@"test"];
-	NSString *password=[cmdline stringValueForOption:@"password"];
-	NSString *encoding=[cmdline stringValueForOption:@"encoding"];
-	NSString *passwordencoding=[cmdline stringValueForOption:@"password-encoding"];
-	BOOL printencoding=[cmdline boolValueForOption:@"print-encoding"];
-	BOOL indexes=[cmdline boolValueForOption:@"indexes"];
-	BOOL json=[cmdline boolValueForOption:@"json"];
-	BOOL jsonascii=[cmdline boolValueForOption:@"json-ascii"];
-	BOOL norecursion=[cmdline boolValueForOption:@"no-recursion"];
 
-	// -json-ascii implies -json.
-	if(jsonascii) json=YES;
 
-	// -verylong and -long are exclusive.
-	if(verylongformat) longformat=NO;
+        longformat=[cmdline boolValueForOption:@"long"];
+        verylongformat=[cmdline boolValueForOption:@"verylong"];
+        test=[cmdline boolValueForOption:@"test"];
+        NSString *password=[cmdline stringValueForOption:@"password"];
+        NSString *encoding=[cmdline stringValueForOption:@"encoding"];
+        NSString *passwordencoding=[cmdline stringValueForOption:@"password-encoding"];
+        BOOL printencoding=[cmdline boolValueForOption:@"print-encoding"];
+        BOOL indexes=[cmdline boolValueForOption:@"indexes"];
+        BOOL json=[cmdline boolValueForOption:@"json"];
+        BOOL jsonascii=[cmdline boolValueForOption:@"json-ascii"];
+        BOOL norecursion=[cmdline boolValueForOption:@"no-recursion"];
 
-	if(IsListRequest(encoding)||IsListRequest(passwordencoding))
-	{
-		[@"Available encodings are:\n" print];
-		PrintEncodingList();
-		return 0;
-	}
+        // -json-ascii implies -json.
+        if(jsonascii) json=YES;
 
-	NSArray *files=[cmdline remainingArguments];
-	int numfiles=[files count];
-	if(numfiles==0)
-	{
-		[cmdline printUsage];
-		return 1;
-	}
+        // -verylong and -long are exclusive.
+        if(verylongformat) longformat=NO;
 
-	NSString *filename=[files objectAtIndex:0];
+        if(IsListRequest(encoding)||IsListRequest(passwordencoding))
+        {
+            [@"Available encodings are:\n" print];
+            PrintEncodingList();
+            return 0;
+        }
 
-	if(json)
-	{
-		printer=[CSJSONPrinter new];
-		[printer setIndentString:@"  "];
-		[printer setASCIIMode:jsonascii];
+        NSArray *files=[cmdline remainingArguments];
+        int numfiles=[files count];
+        if(numfiles==0)
+        {
+            [cmdline printUsage];
+            return 1;
+        }
 
-		[printer startPrintingDictionary];
-		[printer printDictionaryObject:[NSNumber numberWithInt:2] forKey:@"lsarFormatVersion"];
+        NSString *filename=[files objectAtIndex:0];
 
-		XADError openerror;
-		XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&openerror];
-		if(!unarchiver)
-		{
-			[printer printDictionaryObject:[NSNumber numberWithInt:openerror] forKey:@"lsarError"];
-			[printer endPrintingDictionary];
-			[@"\n" print];
-			return 1;
-		}
+        if(json)
+        {
+            printer=[CSJSONPrinter new];
+            [printer setIndentString:@"  "];
+            [printer setASCIIMode:jsonascii];
 
-		if(password) [unarchiver setPassword:password];
-		if(encoding) [[unarchiver archiveParser] setEncodingName:encoding];
-		if(passwordencoding) [[unarchiver archiveParser] setPasswordEncodingName:passwordencoding];
-		[unarchiver setExtractsSubArchives:!norecursion];
-		[unarchiver setAlwaysOverwritesFiles:YES]; // Disable collision checks.
+            [printer startPrintingDictionary];
+            [printer printDictionaryObject:[NSNumber numberWithInt:2] forKey:@"lsarFormatVersion"];
 
-		for(int i=1;i<numfiles;i++)
-		{
-			NSString *filter=[files objectAtIndex:i];
-			if(indexes) [unarchiver addIndexFilter:[filter intValue]];
-			else [unarchiver addGlobFilter:filter];
-		}
+            XADError openerror;
+            XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&openerror];
+            if(!unarchiver)
+            {
+                [printer printDictionaryObject:[NSNumber numberWithInt:openerror] forKey:@"lsarError"];
+                [printer endPrintingDictionary];
+                [@"\n" print];
+                return 1;
+            }
 
-		[unarchiver setDelegate:[[JSONLister new] autorelease]];
+            if(password) [unarchiver setPassword:password];
+            if(encoding) [[unarchiver archiveParser] setEncodingName:encoding];
+            if(passwordencoding) [[unarchiver archiveParser] setPasswordEncodingName:passwordencoding];
+            [unarchiver setExtractsSubArchives:!norecursion];
+            [unarchiver setAlwaysOverwritesFiles:YES]; // Disable collision checks.
 
-		[printer startPrintingDictionaryObjectForKey:@"lsarContents"];
-		[printer startPrintingArray];
+            for(int i=1;i<numfiles;i++)
+            {
+                NSString *filter=[files objectAtIndex:i];
+                if(indexes) [unarchiver addIndexFilter:[filter intValue]];
+                else [unarchiver addGlobFilter:filter];
+            }
 
-		returncode=0;
+            [unarchiver setDelegate:[[JSONLister new] autorelease]];
 
-		XADError parseerror=[unarchiver parse];
-		XADError unarchiveerror=[unarchiver unarchive];
+            [printer startPrintingDictionaryObjectForKey:@"lsarContents"];
+            [printer startPrintingArray];
 
-		[printer endPrintingArray];
+            returncode=0;
 
-		if(parseerror||unarchiveerror)
-		{
-			if(parseerror) [printer printDictionaryObject:[NSNumber numberWithInt:parseerror] forKey:@"lsarError"];
-			else [printer printDictionaryObject:[NSNumber numberWithInt:unarchiveerror] forKey:@"lsarError"];
-			returncode=1;
-		}
+            XADError parseerror=[unarchiver parse];
+            XADError unarchiveerror=[unarchiver unarchive];
 
-		if(test)
-		{
-			XADArchiveParser *subparser=[unarchiver innerArchiveParser];
-			if(subparser)
-			{
-				[printer startPrintingDictionaryObjectForKey:@"lsarTestResult"];
+            [printer endPrintingArray];
 
-				CSHandle *handle=[subparser handle];
-				if([handle hasChecksum])
-				{
-					@try
-					{
-						[handle seekToEndOfFile];
-						if([handle isChecksumCorrect]) [printer printObject:@"ok"];
-						else { [printer printObject:@"wrong_checksum"]; returncode=1; }
-					}
-					@catch(id e) { [printer printObject:@"unpacking_failed"]; returncode=1; }
-				}
-				else [printer printObject:@"no_checksum"];
-			}
-		}
+            if(parseerror||unarchiveerror)
+            {
+                if(parseerror) [printer printDictionaryObject:[NSNumber numberWithInt:parseerror] forKey:@"lsarError"];
+                else [printer printDictionaryObject:[NSNumber numberWithInt:unarchiveerror] forKey:@"lsarError"];
+                returncode=1;
+            }
 
-		XADArchiveParser *parser=[unarchiver archiveParser];
-		[printer printDictionaryObject:[parser encodingName] forKey:@"lsarEncoding"];
-		[printer printDictionaryObject:[NSNumber numberWithFloat:[parser encodingConfidence]] forKey:@"lsarConfidence"];
+            if(test)
+            {
+                XADArchiveParser *subparser=[unarchiver innerArchiveParser];
+                if(subparser)
+                {
+                    [printer startPrintingDictionaryObjectForKey:@"lsarTestResult"];
 
-		XADArchiveParser *outerparser=[unarchiver outerArchiveParser];
-		[printer printDictionaryObject:[outerparser formatName] forKey:@"lsarFormatName"];
-		[printer printDictionaryObject:[outerparser properties] forKey:@"lsarProperties"];
+                    CSHandle *handle=[subparser handle];
+                    if([handle hasChecksum])
+                    {
+                        @try
+                        {
+                            [handle seekToEndOfFile];
+                            if([handle isChecksumCorrect]) [printer printObject:@"ok"];
+                            else { [printer printObject:@"wrong_checksum"]; returncode=1; }
+                        }
+                        @catch(id e) { [printer printObject:@"unpacking_failed"]; returncode=1; }
+                    }
+                    else [printer printObject:@"no_checksum"];
+                }
+            }
 
-		XADArchiveParser *innerparser=[unarchiver innerArchiveParser];
-		if(innerparser)
-		{
-			[printer printDictionaryObject:[innerparser formatName] forKey:@"lsarInnerFormatName"];
-			[printer printDictionaryObject:[innerparser properties] forKey:@"lsarInnerProperties"];
-		}
+            XADArchiveParser *parser=[unarchiver archiveParser];
+            [printer printDictionaryObject:[parser encodingName] forKey:@"lsarEncoding"];
+            [printer printDictionaryObject:[NSNumber numberWithFloat:[parser encodingConfidence]] forKey:@"lsarConfidence"];
 
-		[printer endPrintingDictionary];
+            XADArchiveParser *outerparser=[unarchiver outerArchiveParser];
+            [printer printDictionaryObject:[outerparser formatName] forKey:@"lsarFormatName"];
+            [printer printDictionaryObject:[outerparser properties] forKey:@"lsarProperties"];
 
-		[@"\n" print];
-	}
-	else
-	{
-		[filename print];
-		[@": " print];
-		fflush(stdout);
+            XADArchiveParser *innerparser=[unarchiver innerArchiveParser];
+            if(innerparser)
+            {
+                [printer printDictionaryObject:[innerparser formatName] forKey:@"lsarInnerFormatName"];
+                [printer printDictionaryObject:[innerparser properties] forKey:@"lsarInnerProperties"];
+            }
 
-		XADError openerror;
-		XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&openerror];
-		if(!unarchiver)
-		{
-			if(openerror)
-			{
-				[@"Couldn't open archive. (" print];
-				[[XADException describeXADError:openerror] print];
-				[@".)\n" print];
-			}
-			else
-			{
-				[@"Couldn't recognize the archive format.\n" print];
-			}
-			return 1;
-		}
+            [printer endPrintingDictionary];
 
-		if(password) [unarchiver setPassword:password];
-		if(encoding) [[unarchiver archiveParser] setEncodingName:encoding];
-		if(passwordencoding) [[unarchiver archiveParser] setPasswordEncodingName:passwordencoding];
-		[unarchiver setExtractsSubArchives:!norecursion];
-		[unarchiver setAlwaysOverwritesFiles:YES]; // Disable collision checks.
+            [@"\n" print];
+        }
+        else
+        {
+            [filename print];
+            [@": " print];
+            fflush(stdout);
 
-		for(int i=1;i<numfiles;i++)
-		{
-			NSString *filter=[files objectAtIndex:i];
-			if(indexes) [unarchiver addIndexFilter:[filter intValue]];
-			else [unarchiver addGlobFilter:filter];
-		}
+            XADError openerror;
+            XADSimpleUnarchiver *unarchiver=[XADSimpleUnarchiver simpleUnarchiverForPath:filename error:&openerror];
+            if(!unarchiver)
+            {
+                if(openerror)
+                {
+                    [@"Couldn't open archive. (" print];
+                    [[XADException describeXADError:openerror] print];
+                    [@".)\n" print];
+                }
+                else
+                {
+                    [@"Couldn't recognize the archive format.\n" print];
+                }
+                return 1;
+            }
 
-		[unarchiver setDelegate:[[[Lister alloc] init] autorelease]];
+            if(password) [unarchiver setPassword:password];
+            if(encoding) [[unarchiver archiveParser] setEncodingName:encoding];
+            if(passwordencoding) [[unarchiver archiveParser] setPasswordEncodingName:passwordencoding];
+            [unarchiver setExtractsSubArchives:!norecursion];
+            [unarchiver setAlwaysOverwritesFiles:YES]; // Disable collision checks.
 
-		XADError parseerror=[unarchiver parse];
+            for(int i=1;i<numfiles;i++)
+            {
+                NSString *filter=[files objectAtIndex:i];
+                if(indexes) [unarchiver addIndexFilter:[filter intValue]];
+                else [unarchiver addGlobFilter:filter];
+            }
 
-		if([unarchiver innerArchiveParser])
-		{
-			[[[unarchiver innerArchiveParser] formatName] print];
-			[@" in " print];
-			[[[unarchiver outerArchiveParser] formatName] print];
-		}
-		else
-		{
-			[[[unarchiver outerArchiveParser] formatName] print];
-		}
+            [unarchiver setDelegate:[[[Lister alloc] init] autorelease]];
 
-		NSArray *volumes=[[unarchiver outerArchiveParser] volumes];
-		if([volumes count]>1) [[NSString stringWithFormat:@" (%d volumes)",(int)[volumes count]] print];
+            XADError parseerror=[unarchiver parse];
 
-		[@"\n" print];
+            if([unarchiver innerArchiveParser])
+            {
+                [[[unarchiver innerArchiveParser] formatName] print];
+                [@" in " print];
+                [[[unarchiver outerArchiveParser] formatName] print];
+            }
+            else
+            {
+                [[[unarchiver outerArchiveParser] formatName] print];
+            }
 
-		if(longformat)
-		{
-			[@"     Flags  File size   Ratio  Mode  Date       Time   Name\n" print];
-			[@"     =====  ==========  =====  ====  ========== =====  ====\n" print];
-		}
+            NSArray *volumes=[[unarchiver outerArchiveParser] volumes];
+            if([volumes count]>1) [[NSString stringWithFormat:@" (%d volumes)",(int)[volumes count]] print];
 
-		returncode=0;
-		passed=failed=unknown=0;
+            [@"\n" print];
 
-		XADError unarchiveerror=[unarchiver unarchive];
+            if(longformat)
+            {
+                [@"     Flags  File size   Ratio  Mode  Date       Time   Name\n" print];
+                [@"     =====  ==========  =====  ====  ========== =====  ====\n" print];
+            }
 
-		if(parseerror)
-		{
-			[@"Archive parsing failed! (" print];
-			[[XADException describeXADError:parseerror] print];
-			[@".)\n" print];
-			returncode=1;
-		}
+            returncode=0;
+            passed=failed=unknown=0;
 
-		if(unarchiveerror)
-		{
-			[@"Listing failed! (" print];
-			[[XADException describeXADError:unarchiveerror] print];
-			[@".)\n" print];
-			returncode=1;
-		}
+            XADError unarchiveerror=[unarchiver unarchive];
 
-		if(longformat)
-		{
-			[@"(Flags: D=Directory, R=Resource fork, L=Link, E=Encrypted, @=Extended attributes)\n" print];
-			NSString *compkey=CompressionNameExplanationForLongInfo();
-			if(compkey)
-			{
-				[@"(Mode: " print];
-				[compkey print];
-				[@")\n" print];
-			}
-		}
+            if(parseerror)
+            {
+                [@"Archive parsing failed! (" print];
+                [[XADException describeXADError:parseerror] print];
+                [@".)\n" print];
+                returncode=1;
+            }
 
-		if(longformat||verylongformat)
-		{
-			XADString *comment=[[[unarchiver archiveParser] properties] objectForKey:XADCommentKey];
-			if(comment)
-			{
-				[@"Archive comment:\n" print];
-				[[comment string] print];
-				[@"\n" print];
-			}
-		}
+            if(unarchiveerror)
+            {
+                [@"Listing failed! (" print];
+                [[XADException describeXADError:unarchiveerror] print];
+                [@".)\n" print];
+                returncode=1;
+            }
 
-		if(test)
-		{
-			if(unknown)
-			{
-				[[NSString stringWithFormat:@"%d passed, %d failed, %d unknown.",
-				passed,failed,unknown] print];
-			}
-			else
-			{
-				[[NSString stringWithFormat:@"%d passed, %d failed.",
-				passed,failed] print];
-			}
+            if(longformat)
+            {
+                [@"(Flags: D=Directory, R=Resource fork, L=Link, E=Encrypted, @=Extended attributes)\n" print];
+                NSString *compkey=CompressionNameExplanationForLongInfo();
+                if(compkey)
+                {
+                    [@"(Mode: " print];
+                    [compkey print];
+                    [@")\n" print];
+                }
+            }
 
-			XADArchiveParser *subparser=[unarchiver innerArchiveParser];
-			if(subparser)
-			{
-				CSHandle *handle=[subparser handle];
-				if([handle hasChecksum])
-				{
-					@try
-					{
-						[handle seekToEndOfFile];
-						if([handle isChecksumCorrect]) [@" Container file checksum is correct." print];
-						else { [@" Container file checksum failed!" print]; returncode=1; }
-					}
-					@catch(id e) { [@" Container file failed while testing checksum!" print]; returncode=1; }
-				}
-				else [@" Container file has no checksum." print];
-			}
+            if(longformat||verylongformat)
+            {
+                XADString *comment=[[[unarchiver archiveParser] properties] objectForKey:XADCommentKey];
+                if(comment)
+                {
+                    [@"Archive comment:\n" print];
+                    [[comment string] print];
+                    [@"\n" print];
+                }
+            }
 
-			[@"\n" print];
-		}
+            if(test)
+            {
+                if(unknown)
+                {
+                    [[NSString stringWithFormat:@"%d passed, %d failed, %d unknown.",
+                      passed,failed,unknown] print];
+                }
+                else
+                {
+                    [[NSString stringWithFormat:@"%d passed, %d failed.",
+                      passed,failed] print];
+                }
 
-		if(printencoding)
-		{
-			XADArchiveParser *parser=[unarchiver archiveParser];
-			[[NSString stringWithFormat:@"Encoding: %@ (%d%% confidence)\n",
-			[parser encodingName],(int)([parser encodingConfidence]*100+0.5)] print];
-		}
-	}
+                XADArchiveParser *subparser=[unarchiver innerArchiveParser];
+                if(subparser)
+                {
+                    CSHandle *handle=[subparser handle];
+                    if([handle hasChecksum])
+                    {
+                        @try
+                        {
+                            [handle seekToEndOfFile];
+                            if([handle isChecksumCorrect]) [@" Container file checksum is correct." print];
+                            else { [@" Container file checksum failed!" print]; returncode=1; }
+                        }
+                        @catch(id e) { [@" Container file failed while testing checksum!" print]; returncode=1; }
+                    }
+                    else [@" Container file has no checksum." print];
+                }
 
-	[pool release];
+                [@"\n" print];
+            }
+
+            if(printencoding)
+            {
+                XADArchiveParser *parser=[unarchiver archiveParser];
+                [[NSString stringWithFormat:@"Encoding: %@ (%d%% confidence)\n",
+                  [parser encodingName],(int)([parser encodingConfidence]*100+0.5)] print];
+            }
+        }
+
+    } // auto release pool
 
 	return returncode;
 }
@@ -407,62 +407,62 @@ int main(int argc,const char **argv)
 
 -(BOOL)simpleUnarchiver:(XADSimpleUnarchiver *)unarchiver shouldExtractEntryWithDictionary:(NSDictionary *)dict to:(NSString *)path
 {
-	NSAutoreleasePool *pool=[NSAutoreleasePool new];
+    @autoreleasepool {
 
-	if(longformat)
-	{
-		NSString *infoline=LongInfoLineForEntryWithDictionary(dict,[unarchiver archiveParser]);
-		[infoline print];
-	}
-	else // Short or very long format.
-	{
-		NSString *infoline=ShortInfoLineForEntryWithDictionary(dict);
-		[infoline print];
-	}
+        if(longformat)
+        {
+            NSString *infoline=LongInfoLineForEntryWithDictionary(dict,[unarchiver archiveParser]);
+            [infoline print];
+        }
+        else // Short or very long format.
+        {
+            NSString *infoline=ShortInfoLineForEntryWithDictionary(dict);
+            [infoline print];
+        }
 
-	if(test)
-	{
-		[@"... " print];
-		fflush(stdout);
+        if(test)
+        {
+            [@"... " print];
+            fflush(stdout);
 
-		switch(TestEntry(unarchiver,dict))
-		{
-			case EntryDoesNotNeedTestingResult: passed++; break;
-			case EntryIsNotSupportedResult: [@"Unsupported!" print]; failed++; break;
-			case EntryHasWrongPasswordResult: [@"Wrong password!" print]; failed++; break;
-			case EntryFailsWhileUnpackingResult: [@"Unpacking failed!" print]; failed++; break;
-			case EntrySizeIsWrongResult: [@"Wrong size!" print]; failed++; break;
-			case EntryHasNoChecksumResult: [@"Unknown." print]; unknown++; break;
-			case EntryChecksumIsIncorrectResult: [@"Checksum failed!" print]; failed++; break;
-			case EntryIsOkResult: [@"OK." print]; passed++; break;
-		}
-	}
-	else if(verylongformat)
-	{
-		[@": " print];
-	}
+            switch(TestEntry(unarchiver,dict))
+            {
+                case EntryDoesNotNeedTestingResult: passed++; break;
+                case EntryIsNotSupportedResult: [@"Unsupported!" print]; failed++; break;
+                case EntryHasWrongPasswordResult: [@"Wrong password!" print]; failed++; break;
+                case EntryFailsWhileUnpackingResult: [@"Unpacking failed!" print]; failed++; break;
+                case EntrySizeIsWrongResult: [@"Wrong size!" print]; failed++; break;
+                case EntryHasNoChecksumResult: [@"Unknown." print]; unknown++; break;
+                case EntryChecksumIsIncorrectResult: [@"Checksum failed!" print]; failed++; break;
+                case EntryIsOkResult: [@"OK." print]; passed++; break;
+            }
+        }
+        else if(verylongformat)
+        {
+            [@": " print];
+        }
 
-	[@"\n" print];
+        [@"\n" print];
 
-	if(verylongformat)
-	{
-		[@"  " print];
-		NSString *description=XADHumanReadableEntryWithDictionary(dict,[unarchiver archiveParser]);
-		[XADIndentTextWithSpaces(description,2) print];
-		[@"\n" print];
-	}
-	if(longformat)
-	{
-		XADString *comment=[dict objectForKey:XADCommentKey];
-		if(comment)
-		{
-			[@"     File comment: " print];
-			[[comment string] print];
-			[@"\n" print];
-		}
-	}
+        if(verylongformat)
+        {
+            [@"  " print];
+            NSString *description=XADHumanReadableEntryWithDictionary(dict,[unarchiver archiveParser]);
+            [XADIndentTextWithSpaces(description,2) print];
+            [@"\n" print];
+        }
+        if(longformat)
+        {
+            XADString *comment=[dict objectForKey:XADCommentKey];
+            if(comment)
+            {
+                [@"     File comment: " print];
+                [[comment string] print];
+                [@"\n" print];
+            }
+        }
 
-	[pool release];
+    }   // autorelease pool
 
 	return NO;
 }

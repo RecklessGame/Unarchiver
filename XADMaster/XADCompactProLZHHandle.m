@@ -15,10 +15,7 @@
 
 -(void)dealloc
 {
-	[literalcode release];
-	[lengthcode release];
-	[offsetcode release];
-	[super dealloc];
+	literalcode=lengthcode=offsetcode=nil;
 }
 
 -(void)resetLZSSHandle
@@ -40,10 +37,6 @@
 				if((CSInputBufferOffset(input)-blockstart)&1) CSInputSkipBytes(input,3);
 				else CSInputSkipBytes(input,2);
 			}
-
-			[literalcode release];
-			[lengthcode release];
-			[offsetcode release];
 			literalcode=lengthcode=offsetcode=nil;
 			literalcode=[self allocAndParseCodeOfSize:256];
 			lengthcode=[self allocAndParseCodeOfSize:64];

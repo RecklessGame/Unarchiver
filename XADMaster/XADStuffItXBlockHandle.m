@@ -19,7 +19,7 @@
 {
 	free(buffer);
 	[parent release];
-	[super dealloc];
+	
 }
 
 -(void)resetBlockStream

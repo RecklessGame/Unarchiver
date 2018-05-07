@@ -26,7 +26,7 @@
 {
 	[handle release];
 	[parts release];
-	[super dealloc];
+	
 }
 
 -(void)resetStream

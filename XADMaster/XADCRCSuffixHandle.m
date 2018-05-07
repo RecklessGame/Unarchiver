@@ -40,7 +40,7 @@ CRCSize:(int)crcbytes bigEndianCRC:(BOOL)bigendian CRCTable:(const uint32_t *)cr
 -(void)dealloc
 {
 	[parent release];
-	[super dealloc];
+	
 }
 
 -(void)resetStream

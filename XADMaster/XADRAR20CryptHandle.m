@@ -18,7 +18,7 @@
 {
 	[parent release];
 	[password release];
-	[super dealloc];
+	
 }
 
 -(void)resetBlockStream

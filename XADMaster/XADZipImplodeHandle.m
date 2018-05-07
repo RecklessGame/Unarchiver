@@ -20,18 +20,17 @@ largeDictionary:(BOOL)largedict hasLiterals:(BOOL)hasliterals
 
 -(void)dealloc
 {
-	[literalcode release];
-	[lengthcode release];
-	[offsetcode release];
-	[super dealloc];
+    literalcode = nil;
+    lengthcode = nil;
+    offsetcode = nil;
+	
 }
 
 -(void)resetLZSSHandle
 {
-	[literalcode release];
-	[lengthcode release];
-	[offsetcode release];
-	literalcode=lengthcode=offsetcode=nil;
+    literalcode = nil;
+    lengthcode = nil;
+    offsetcode = nil;
 
 	if(literals) literalcode=[self allocAndParseCodeOfSize:256];
 	lengthcode=[self allocAndParseCodeOfSize:64];

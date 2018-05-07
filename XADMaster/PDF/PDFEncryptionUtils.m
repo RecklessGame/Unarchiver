@@ -88,7 +88,7 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 	[parent release];
 	[key release];
 	[iv release];
-	[super dealloc];
+	
 }
 
 -(void)resetBlockStream

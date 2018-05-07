@@ -24,7 +24,7 @@
 {
 	[parent release];
 	[password release];
-	[super dealloc];
+	
 }
 
 

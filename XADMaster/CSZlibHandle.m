@@ -11,22 +11,22 @@ NSString *CSZlibException=@"CSZlibException";
 
 +(CSZlibHandle *)zlibHandleWithHandle:(CSHandle *)handle
 {
-	return [[[CSZlibHandle alloc] initWithHandle:handle length:CSHandleMaxLength header:YES name:[handle name]] autorelease];
+	return [[CSZlibHandle alloc] initWithHandle:handle length:CSHandleMaxLength header:YES name:[handle name]];
 }
 
 +(CSZlibHandle *)zlibHandleWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	return [[[CSZlibHandle alloc] initWithHandle:handle length:length header:YES name:[handle name]] autorelease];
+	return [[CSZlibHandle alloc] initWithHandle:handle length:length header:YES name:[handle name]];
 }
 
 +(CSZlibHandle *)deflateHandleWithHandle:(CSHandle *)handle
 {
-	return [[[CSZlibHandle alloc] initWithHandle:handle length:CSHandleMaxLength header:NO name:[handle name]] autorelease];
+	return [[CSZlibHandle alloc] initWithHandle:handle length:CSHandleMaxLength header:NO name:[handle name]];
 }
 
 +(CSZlibHandle *)deflateHandleWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	return [[[CSZlibHandle alloc] initWithHandle:handle length:length header:NO name:[handle name]] autorelease];
+	return [[CSZlibHandle alloc] initWithHandle:handle length:length header:NO name:[handle name]];
 }
 
 
@@ -36,7 +36,7 @@ NSString *CSZlibException=@"CSZlibException";
 {
 	if((self=[super initWithName:descname length:length]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		startoffs=[parent offsetInFile];
 		inited=YES;
 		seekback=NO;
@@ -68,8 +68,8 @@ NSString *CSZlibException=@"CSZlibException";
 			inited=YES;
 			return self;
 		}
-
-		[self release];
+#warning need re-thinking of self release
+		//[self release];
 	}
 	return nil;
 }
@@ -77,9 +77,7 @@ NSString *CSZlibException=@"CSZlibException";
 -(void)dealloc
 {
 	if(inited) inflateEnd(&zs);
-	[parent release];
-
-	[super dealloc];
+    parent = nil;
 }
 
 -(void)setSeekBackAtEOF:(BOOL)seekateof { seekback=seekateof; }

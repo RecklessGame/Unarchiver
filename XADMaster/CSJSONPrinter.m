@@ -17,7 +17,7 @@
 -(void)dealloc
 {
 	[indentstring release];
-	[super dealloc];
+	
 }
 
 

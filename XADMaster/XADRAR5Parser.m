@@ -87,7 +87,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 {
 	[headerkey release];
 	[cryptocache release];
-	[super dealloc];
+	
 }
 
 -(void)parse

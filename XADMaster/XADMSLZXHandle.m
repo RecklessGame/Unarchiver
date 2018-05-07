@@ -28,7 +28,7 @@
 	[maincode release];
 	[lengthcode release];
 	[offsetcode release];
-	[super dealloc];
+	
 }
 
 -(void)resetCABBlockHandle

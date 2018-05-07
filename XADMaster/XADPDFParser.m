@@ -46,7 +46,7 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 -(void)dealloc
 {
 	[parser release];
-	[super dealloc];
+	
 }
 
 -(void)parse
@@ -644,7 +644,7 @@ numberOfChannels:(int)numberofchannels palette:(NSData *)palettedata
 -(void)dealloc
 {
 	[palette release];
-	[super dealloc];
+	
 }
 
 -(void)resetByteStream

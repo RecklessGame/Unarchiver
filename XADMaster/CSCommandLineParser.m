@@ -69,7 +69,7 @@ static NSString *AliasOptionType=@"AliasOptionType";
 	[usagefooter release];
 	[programversion release];
 
-	[super dealloc];
+	
 }
 
 

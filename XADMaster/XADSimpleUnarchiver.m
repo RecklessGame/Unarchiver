@@ -117,7 +117,7 @@
 
 	[toplevelname release];
 
-	[super dealloc];
+	
 }
 
 -(XADArchiveParser *)archiveParser

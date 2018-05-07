@@ -32,7 +32,7 @@ offset:(off_t)offset reference:(PDFObjectReference *)reference parser:(PDFParser
 	[dict release];
 	[fh release];
 	[ref release];
-	[super dealloc];
+	
 }
 
 
@@ -645,7 +645,7 @@ components:(int)components bitsPerComponent:(int)bitspercomp
 -(void)dealloc
 {
 	free(prevbuf);
-	[super dealloc];
+	
 }
 
 -(void)resetByteStream

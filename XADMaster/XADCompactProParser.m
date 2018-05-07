@@ -211,9 +211,9 @@
 	off_t size=[[dict objectForKey:XADFileSizeKey] longLongValue];
 
 	if([[dict objectForKey:@"CompactProLZH"] boolValue])
-	handle=[[[XADCompactProLZHHandle alloc] initWithHandle:handle blockSize:0x1fff0] autorelease];
+	handle=[[XADCompactProLZHHandle alloc] initWithHandle:handle blockSize:0x1fff0];
 
-	handle=[[[XADCompactProRLEHandle alloc] initWithHandle:handle length:size] autorelease];
+	handle=[[XADCompactProRLEHandle alloc] initWithHandle:handle length:size];
 
 	NSNumber *crc=[dict objectForKey:@"CompactProCRC32"];
 	if(checksum&&crc)

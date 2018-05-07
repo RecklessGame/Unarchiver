@@ -31,7 +31,7 @@
 {
 	if((self=[super initWithName:[handle name] length:length]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		startoffs=[handle offsetInFile];
 
 		if(propertydata&&[propertydata length]>=4) baseoffset=CSUInt32LE([propertydata bytes]);
@@ -44,8 +44,7 @@
 
 -(void)dealloc
 {
-	[parent release];
-	[super dealloc];
+    parent = nil;
 }
 
 -(void)resetBlockStream

@@ -93,7 +93,7 @@ static off_t ActualOffsetToSkip(XADSkipHandle *self,off_t pos)
 {
 	if((self=[super initWithName:[handle name]]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		regions=malloc(sizeof(XADSkipRegion));
 		regions[0].actual=regions[0].skip=0;
 		numregions=1;
@@ -116,8 +116,8 @@ static off_t ActualOffsetToSkip(XADSkipHandle *self,off_t pos)
 -(void)dealloc
 {
 	free(regions);
-	[parent release];
-	[super dealloc];
+    regions = NULL;
+    parent = nil;	
 }
 
 

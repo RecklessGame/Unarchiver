@@ -25,7 +25,7 @@
 	[offsetcode release];
 	[lengthcode release];
 	for(int i=0;i<4;i++) [audiocode[i] release];
-	[super dealloc];
+	
 }
 
 -(void)resetLZSSHandle
