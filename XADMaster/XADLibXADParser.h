@@ -12,7 +12,7 @@
 
 	struct XADInHookData
 	{
-		CSHandle *fh;
+		__unsafe_unretained CSHandle *fh;
 		const char *name;
 	} indata;
 

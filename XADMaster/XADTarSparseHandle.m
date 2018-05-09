@@ -8,7 +8,7 @@
 {
 	if( (self = [super initWithName:[handle name]]) )
 	{
-		parent = [handle retain];
+		parent = handle;
 		regions = malloc( sizeof( XADTarSparseRegion ) );
 		regions[ 0 ].nextRegion = -1;
 		regions[ 0 ].size = [parent fileSize];
@@ -45,7 +45,7 @@
 -(void)dealloc
 {
 	free( regions );
-	[parent release];
+	parent = nil;
 	
 }
 

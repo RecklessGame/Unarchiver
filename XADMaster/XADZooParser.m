@@ -213,11 +213,11 @@
 		break;
 
 		case 1:
-			handle=[[[XADZooMethod1Handle alloc] initWithHandle:handle length:length] autorelease];
+			handle=[[XADZooMethod1Handle alloc] initWithHandle:handle length:length];
 		break;
 
 		case 2:
-			handle=[[[XADLZHStaticHandle alloc] initWithHandle:handle length:length windowBits:13] autorelease];
+			handle=[[XADLZHStaticHandle alloc] initWithHandle:handle length:length windowBits:13];
 		break;
 
 		default:

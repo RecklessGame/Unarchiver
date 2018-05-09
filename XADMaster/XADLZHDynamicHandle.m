@@ -23,7 +23,7 @@
 
 -(void)dealloc
 {
-	[distancecode release];
+    distancecode = nil;
 	
 }
 

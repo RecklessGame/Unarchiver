@@ -7,7 +7,7 @@
 {
 	if((self=[super init]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		extbytes=reserved;
 		numfolders=0;
 	}
@@ -16,7 +16,7 @@
 
 -(void)dealloc
 {
-	[parent release];
+	parent = nil;
 	
 }
 

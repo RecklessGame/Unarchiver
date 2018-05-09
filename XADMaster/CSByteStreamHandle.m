@@ -75,7 +75,7 @@ NSString *CSByteStreamEOFReachedException=@"CSByteStreamEOFReachedException";
 {
 	if(self=[super initWithName:[handle name]])
 	{
-		parent=[handle retain];
+		parent=handle;
 		readatmost_ptr=(int (*)(id,SEL,int,void *))[parent methodForSelector:@selector(readAtMost:toBuffer:)];
 
 		pos=0;
@@ -95,7 +95,7 @@ NSString *CSByteStreamEOFReachedException=@"CSByteStreamEOFReachedException";
 
 -(void)dealloc
 {
-	[parent release];
+	parent = nil;
 	[coro release];
 	
 }

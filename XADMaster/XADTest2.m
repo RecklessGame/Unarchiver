@@ -85,7 +85,7 @@ int main(int argc,char **argv)
 
 		NSLog(@"Parsing file \"%@\" with parser \"%@\".",filename,[parser formatName]);
 
-		[parser setDelegate:[[TestDelegate new] autorelease]];
+		[parser setDelegate:[TestDelegate new]];
 
 		NSString *pass=FigureOutPassword(filename);
 		if(pass) [parser setPassword:pass];

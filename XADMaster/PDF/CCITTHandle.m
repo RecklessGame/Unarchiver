@@ -128,8 +128,8 @@ line=0;
 
 -(void)dealloc
 {
-	[whitecode release];
-	[blackcode release];
+    whitecode = nil;
+    blackcode = nil;
 	
 }
 
@@ -201,9 +201,9 @@ void FindNextOldChangeOfColorAndLargerThan(CCITTFaxT6Handle *self,int column,int
 
 -(void)dealloc
 {
-	[maincode release];
-	[whitecode release];
-	[blackcode release];
+	maincode = nil;
+    whitecode = nil;
+    blackcode = nil;
 	free(prevchanges);
 	free(currchanges);
 	

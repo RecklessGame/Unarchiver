@@ -368,7 +368,7 @@ static xadUINT32 InFunc(struct Hook *hook,xadPTR object,struct xadHookParam *par
 
 static xadUINT32 ProgressFunc(struct Hook *hook,xadPTR object,struct xadProgressInfo *info)
 {
-	XADLibXADParser *parser=(__bridge XADLibXADParser *)hook->h_Data;
+	XADLibXADParser *parser=(__bridge XADLibXADParser *)(*(hook->h_Data));
 
 	switch(info->xpi_Mode)
 	{
@@ -392,7 +392,7 @@ static xadUINT32 ProgressFunc(struct Hook *hook,xadPTR object,struct xadProgress
 
 static xadUINT32 OutFunc(struct Hook *hook,xadPTR object,struct xadHookParam *param)
 {
-	NSMutableData *data=(__bridge NSMutableData *)hook->h_Data;
+	NSMutableData *data=(__bridge NSMutableData *)(*(hook->h_Data));
 
 	switch(param->xhp_Command)
 	{

@@ -26,7 +26,8 @@ typedef struct CABHeader
 
 	int headerextsize,folderextsize,datablockextsize;
 
-	NSData *nextvolume,*prevvolume;
+    __unsafe_unretained NSData *nextvolume;
+    __unsafe_unretained NSData *prevvolume;
 } CABHeader;
 
 static CABHeader ReadCABHeader(CSHandle *fh);
@@ -76,10 +77,10 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *d
                 CABHeader head=ReadCABHeader(fh);
                 if(head.cabindex!=lastindex-1) @throw @"Index mismatch";
 
-                namedata=[head.prevvolume retain];
+                namedata=head.prevvolume;
                 lastindex=head.cabindex;
             }
-			[namedata autorelease];
+            namedata = nil;
 		}
 
 		if(lastindex!=0) @throw @"Couldn't find first volume";
@@ -95,10 +96,10 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *d
                 CABHeader head=ReadCABHeader(fh);
                 if(head.cabindex!=lastindex+1) @throw @"Index mismatch";
 
-                namedata=[head.nextvolume retain];
+                namedata=head.nextvolume;
                 lastindex=head.cabindex;
             }
-			[namedata autorelease];
+            namedata = nil;
 		}
 	}
 	@catch(id e) { NSLog(@"CAB volume scanning error: %@",e); }
@@ -137,7 +138,7 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *d
 			}
 			else
 			{
-				blocks=[[[XADCABBlockReader alloc] initWithHandle:fh reservedBytes:head.datablockextsize] autorelease];
+				blocks=[[XADCABBlockReader alloc] initWithHandle:fh reservedBytes:head.datablockextsize];
 				[folders addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
 					blocks,@"BlockReader",
 					[NSNumber numberWithInt:method],@"Method",
@@ -287,10 +288,10 @@ static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *d
 
 	switch(method&0x0f)
 	{
-		case 0: return [[[XADCABCopyHandle alloc] initWithBlockReader:blocks] autorelease];
-		case 1: return [[[XADMSZipHandle alloc] initWithBlockReader:blocks] autorelease];
-		case 2: return [[[XADQuantumHandle alloc] initWithBlockReader:blocks windowBits:(method>>8)&0x1f] autorelease];
-		case 3: return [[[XADMSLZXHandle alloc] initWithBlockReader:blocks windowBits:(method>>8)&0x1f] autorelease];
+		case 0: return [[XADCABCopyHandle alloc] initWithBlockReader:blocks];
+		case 1: return [[XADMSZipHandle alloc] initWithBlockReader:blocks];
+		case 2: return [[XADQuantumHandle alloc] initWithBlockReader:blocks windowBits:(method>>8)&0x1f];
+		case 3: return [[XADMSLZXHandle alloc] initWithBlockReader:blocks windowBits:(method>>8)&0x1f];
 		default:
 			[self reportInterestingFileWithReason:@"Unsupported compression method %d",method&0x0f];
 			return nil;
@@ -431,7 +432,7 @@ static NSData *ReadCString(CSHandle *fh)
 
 static CSHandle *FindHandleForName(NSData *namedata,NSString *dirname,NSArray *dircontents)
 {
-	NSString *filepart=[[[NSString alloc] initWithData:namedata encoding:NSWindowsCP1252StringEncoding] autorelease];
+	NSString *filepart=[[NSString alloc] initWithData:namedata encoding:NSWindowsCP1252StringEncoding];
 	NSString *volumename=[dirname stringByAppendingPathComponent:filepart];
 
 	@try

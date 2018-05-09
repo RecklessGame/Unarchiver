@@ -15,7 +15,7 @@ static void ResetTable(int *table,int *reverse);
 	if((self=[super initWithName:[parent filename] windowSize:0x10000]))
 	{
 		parser=parent;
-		files=[filearray retain];
+		files=filearray;
 
 		lengthcode1=[[XADPrefixCode alloc] initWithLengths:(int[256]){
 		2,2,3,4,4,5,5,6,6,6,6,7,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,10,10,10,10,12,12,
@@ -169,17 +169,17 @@ static void ResetTable(int *table,int *reverse);
 
 -(void)dealloc
 {
-	[lengthcode1 release];
-	[lengthcode2 release];
-	[huffmancode0 release];
-	[huffmancode1 release];
-	[huffmancode2 release];
-	[huffmancode3 release];
-	[huffmancode4 release];
-	[shortmatchcode0 release];
-	[shortmatchcode1 release];
-	[shortmatchcode2 release];
-	[shortmatchcode3 release];
+	lengthcode1 = nil;
+	lengthcode2 = nil;
+	huffmancode0 = nil;
+	huffmancode1 = nil;
+	huffmancode2 = nil;
+	huffmancode3 = nil;
+	huffmancode4 = nil;
+	shortmatchcode0 = nil;
+	shortmatchcode1 = nil;
+	shortmatchcode2 = nil;
+	shortmatchcode3 = nil;
 	
 }
 

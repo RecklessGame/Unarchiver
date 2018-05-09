@@ -9,7 +9,7 @@
 {
 	if((self=[super initWithName:[handle name] length:length]))
 	{
-		parent=[handle retain];
+        parent=handle;
 		currhandle=nil;
 		currinput=NULL;
 	}
@@ -18,14 +18,13 @@
 
 -(void)dealloc
 {
-	[parent release];
-	[currhandle release];
+    parent = nil;
+    currhandle = nil;
 	
 }
 
 -(void)resetStream
 {
-	[currhandle release];
 	currhandle=nil;
 }
 
@@ -70,7 +69,7 @@
 			switch(buf[1])
 			{
 				case 0:
-					currhandle=[[parent subHandleOfLength:size] retain];
+                    currhandle=[parent subHandleOfLength:size];
 					currinput=NULL;
 				break;
 
@@ -78,10 +77,10 @@
 				{
 					int windowsize=1<<[parent readUInt8];
 					if(windowsize<0x100000) windowsize=0x100000;
-					XADStuffItXDarkhorseHandle *dh=[[XADStuffItXDarkhorseHandle alloc]
-					initWithHandle:parent length:size windowSize:windowsize];
-					currinput=dh->input;
-					currhandle=dh;
+                    XADStuffItXDarkhorseHandle *dh=[[XADStuffItXDarkhorseHandle alloc]
+                                                    initWithHandle:parent length:size windowSize:windowsize];
+                    currinput=dh->input;
+                    currhandle=dh;
 				}
 				break;
 
@@ -111,7 +110,6 @@
 		if(actual==0)
 		{
 			if(currinput) CSInputSynchronizeFileOffset(currinput);
-			[currhandle release];
 			currhandle=nil;
 		}
 		bytes+=actual;

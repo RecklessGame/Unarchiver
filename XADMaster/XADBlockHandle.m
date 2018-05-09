@@ -6,7 +6,7 @@
 {
 	if((self=[super initWithName:[handle name]]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		currpos=0;
 		length=CSHandleMaxLength;
 		numblocks=0;
@@ -20,7 +20,7 @@
 {
 	if((self=[super initWithName:[handle name]]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		currpos=0;
 		length=maxlength;
 		numblocks=0;
@@ -32,7 +32,7 @@
 
 -(void)dealloc
 {
-	[parent release];
+	parent = nil;
 	
 }
 

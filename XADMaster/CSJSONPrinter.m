@@ -25,8 +25,7 @@
 
 -(void)setIndentString:(NSString *)string
 {
-	[indentstring autorelease];
-	indentstring=[string retain];
+	indentstring=[string copy];
 }
 
 -(void)setASCIIMode:(BOOL)ascii

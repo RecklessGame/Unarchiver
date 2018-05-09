@@ -45,13 +45,13 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 
 -(void)dealloc
 {
-	[parser release];
+	parser = nil;
 	
 }
 
 -(void)parse
 {
-	parser=[[PDFParser parserWithHandle:[self handle]] retain];
+	parser=[PDFParser parserWithHandle:[self handle]];
 	[parser setPasswordRequestAction:@selector(needsPassword:) target:self];
 
 	[parser parse];
@@ -101,7 +101,7 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 	}
 
 	// Sort images in page order.
-	[images sortUsingFunction:(void *)SortPages context:order];
+	[images sortUsingFunction:(void *)SortPages context:(__bridge void *)order];
 
 	// Output images.
 	enumerator=[images objectEnumerator];
@@ -417,10 +417,9 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 		if(palette)
 		{
 			int components=[[dict objectForKey:@"PDFTIFFExpandedComponents"] intValue];
-
-			handle=[[[XAD8BitPaletteExpansionHandle alloc] initWithHandle:handle
-			length:[stream imageWidth]*[stream imageHeight]*components
-			numberOfChannels:components palette:palette] autorelease];
+            handle=[[XAD8BitPaletteExpansionHandle alloc] initWithHandle:handle
+                                                                  length:[stream imageWidth]*[stream imageHeight]*components
+                                                        numberOfChannels:components palette:palette];
 		}
 
 		return [CSMultiHandle multiHandleWithHandles:
@@ -441,7 +440,7 @@ static NSData *CreateNewJPEGHeaderWithColourProfile(NSData *fileheader,NSData *p
 
 static int SortPages(id first,id second,void *context)
 {
-	NSDictionary *order=(NSDictionary *)context;
+	NSDictionary *order=(__bridge NSDictionary *)context;
 	NSNumber *firstpage=[order objectForKey:[first reference]];
 	NSNumber *secondpage=[order objectForKey:[second reference]];
 	if(!firstpage&&!secondpage) return 0;
@@ -635,7 +634,7 @@ numberOfChannels:(int)numberofchannels palette:(NSData *)palettedata
 {
 	if((self=[super initWithHandle:parent length:length]))
 	{
-		palette=[palettedata retain];
+		palette=palettedata;
 		numchannels=numberofchannels;
 	}
 	return self;
@@ -643,8 +642,7 @@ numberOfChannels:(int)numberofchannels palette:(NSData *)palettedata
 
 -(void)dealloc
 {
-	[palette release];
-	
+    palette = nil;
 }
 
 -(void)resetByteStream

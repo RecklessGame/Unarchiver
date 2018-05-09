@@ -57,11 +57,11 @@
 {
 	int sum=[[dict objectForKey:@"SqueezeChecksum"] intValue];
 
-	handle=[[[XADSqueezeHandle alloc] initWithHandle:handle] autorelease];
-	handle=[[[XADRLE90Handle alloc] initWithHandle:handle] autorelease];
+	handle=[[XADSqueezeHandle alloc] initWithHandle:handle];
+	handle=[[XADRLE90Handle alloc] initWithHandle:handle];
 
-	if(checksum) handle=[[[XADChecksumHandle alloc] initWithHandle:handle
-	length:CSHandleMaxLength correctChecksum:sum mask:0xffff] autorelease];
+    if(checksum) handle=[[XADChecksumHandle alloc] initWithHandle:handle
+                                                           length:CSHandleMaxLength correctChecksum:sum mask:0xffff];
 
 	return handle;
 }

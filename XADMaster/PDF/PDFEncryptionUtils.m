@@ -6,7 +6,7 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 
 @implementation PDFMD5Engine
 
-+(PDFMD5Engine *)engine { return [[[self class] new] autorelease]; }
++(PDFMD5Engine *)engine { return [[self class] new]; }
 
 +(NSData *)digestForData:(NSData *)data { return [self digestForBytes:[data bytes] length:[data length]]; }
 
@@ -15,7 +15,7 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 	PDFMD5Engine *md5=[[self class] new];
 	[md5 updateWithBytes:bytes length:length];
 	NSData *res=[md5 digest];
-	[md5 release];
+    md5 = nil;
 	return res;
 }
 
@@ -70,8 +70,8 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 {
 	if(self=[super initWithName:[handle name]])
 	{
-		parent=[handle retain];
-		key=[keydata retain];
+		parent=handle;
+		key=keydata;
 
 		iv=[parent copyDataOfLength:16];
 		startoffs=[parent offsetInFile];
@@ -85,9 +85,9 @@ NSString *PDFMD5FinishedException=@"PDFMD5FinishedException";
 
 -(void)dealloc
 {
-	[parent release];
-	[key release];
-	[iv release];
+	parent = nil;
+	key = nil;
+	iv = nil;
 	
 }
 

@@ -6,7 +6,7 @@ typedef struct RAR5Block
 	uint64_t headersize,type,flags;
 	uint64_t extrasize,datasize;
 	off_t start,outerstart;
-	CSHandle *fh;
+	__unsafe_unretained CSHandle *fh;
 } RAR5Block;
 
 @interface XADRAR5Parser:XADArchiveParser

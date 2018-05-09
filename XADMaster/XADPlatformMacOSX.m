@@ -269,7 +269,7 @@ preservePermissions:(BOOL)preservepermissions
 		if(LSCopyItemAttribute(&ref,kLSRolesAll,kLSItemQuarantineProperties,
 		(CFTypeRef*)&quarantinedict)==noErr)
 		{
-			return [(id)quarantinedict autorelease];
+			return (id)quarantinedict;
 		}
 	}
 	return nil;

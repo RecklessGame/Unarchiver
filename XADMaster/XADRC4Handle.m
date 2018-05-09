@@ -8,9 +8,9 @@
 {
 	if((self=[super initWithName:[handle name] length:[handle fileSize]]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		startoffs=[parent offsetInFile];
-		key=[keydata retain];
+		key=keydata;
 		rc4=nil;
 	}
 	return self;
@@ -18,17 +18,16 @@
 
 -(void)dealloc
 {
-	[parent release];
-	[key release];
-	[rc4 release];
+    parent = nil;
+    key = nil;
+    rc4 = nil;
 	
 }
 
 -(void)resetStream
 {
 	[parent seekToFileOffset:startoffs];
-	[rc4 release];
-	rc4=[(XADRC4Engine *)[XADRC4Engine alloc] initWithKey:key];
+	rc4 = [(XADRC4Engine *)[XADRC4Engine alloc] initWithKey:key];
 }
 
 -(int)streamAtMost:(int)num toBuffer:(void *)buffer
@@ -48,7 +47,7 @@
 
 +(XADRC4Engine *)engineWithKey:(NSData *)key
 {
-	return [[(XADRC4Engine *)[[self class] alloc] initWithKey:key] autorelease];
+	return [(XADRC4Engine *)[[self class] alloc] initWithKey:key];
 }
 
 -(id)initWithKey:(NSData *)key

@@ -19,7 +19,7 @@ startPosition:(off_t)startpos length:(int)length
 		default: class=[XADRAR30Filter class]; break;
 	}
 
-	return [[[class alloc] initWithProgramInvocation:program startPosition:startpos length:length] autorelease];
+	return [[class alloc] initWithProgramInvocation:program startPosition:startpos length:length];
 }
 
 -(id)initWithProgramInvocation:(XADRARProgramInvocation *)program
@@ -27,7 +27,7 @@ startPosition:(off_t)startpos length:(int)length
 {
 	if((self=[super init]))
 	{
-		invocation=[program retain];
+		invocation=program;
 		blockstartpos=startpos;
 		blocklength=length;
 
@@ -38,8 +38,7 @@ startPosition:(off_t)startpos length:(int)length
 
 -(void)dealloc
 {
-	[invocation release];
-	
+    invocation = nil;
 }
 
 -(off_t)startPosition { return blockstartpos; }

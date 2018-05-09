@@ -16,17 +16,16 @@
 
 	if((self=[super initWithHandle:parent length:totallength]))
 	{
-		handle=[parent retain];
-		parts=[partarray retain];
+		handle=parent;
+		parts=partarray;
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[handle release];
-	[parts release];
-	
+    handle = nil;
+    parts = nil;
 }
 
 -(void)resetStream

@@ -37,14 +37,14 @@
 
 -(void)dealloc
 {
-	[parser release];
-	[dataobjects release];
+	parser = nil;
+    dataobjects = nil;
 	
 }
 
 -(void)parse
 {
-	parser=[[XADSWFTagParser parserWithHandle:[self handle]] retain];
+	parser=[XADSWFTagParser parserWithHandle:[self handle]];
 
 	[parser parseHeader];
 

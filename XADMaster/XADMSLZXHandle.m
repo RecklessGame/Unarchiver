@@ -25,9 +25,9 @@
 {
 	CleanupLZSS(&lzss);
 
-	[maincode release];
-	[lengthcode release];
-	[offsetcode release];
+	maincode = nil;
+	lengthcode = nil;
+	offsetcode = nil;
 	
 }
 
@@ -189,9 +189,9 @@
 
 -(void)readBlockHeaderAtPosition:(off_t)pos
 {
-	[maincode release];
-	[lengthcode release];
-	[offsetcode release];
+	maincode = nil;
+	lengthcode = nil;;
+	offsetcode = nil;
 	maincode=lengthcode=offsetcode=nil;
 
 	if(blocktype==3) CSInputSkipTo16BitBoundary(input);
@@ -288,11 +288,11 @@
 			i+=n;
 		}
 
-		[precode release];
+		precode = nil;
 	}
 	@catch(id e)
 	{
-		[precode release];
+		precode = nil;
 		@throw;
 	}
 }

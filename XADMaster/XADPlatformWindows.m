@@ -203,12 +203,10 @@ preservePermissions:(BOOL)preservepermissions
 	@"\"*:<>?\\/|\000"] retain];
 
 	static XADRegex *regex1=nil;
-	if(!regex1) regex1=[[XADRegex regexWithPattern:
-	@"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$" options:REG_ICASE] retain];
+    if(!regex1) regex1=[XADRegex regexWithPattern:@"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$" options:REG_ICASE];
 
 	static XADRegex *regex2=nil;
-	if(!regex2) regex2=[[XADRegex regexWithPattern:
-	@"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\\..*)$" options:REG_ICASE] retain];
+    if(!regex2) regex2=[XADRegex regexWithPattern:@"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\\..*)$" options:REG_ICASE];
 
 	if([component rangeOfCharacterFromSet:charset].location!=NSNotFound)
 	{

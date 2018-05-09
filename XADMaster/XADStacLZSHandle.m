@@ -32,7 +32,7 @@
 
 -(void)dealloc
 {
-	[lengthcode release];
+	lengthcode = nil;;
 	
 }
 

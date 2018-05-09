@@ -59,18 +59,18 @@
 			}
 			else if(magic=='PMa5')
 			{
-				src=[[[XADPackItXORHandle alloc] initWithHandle:handle
-				password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]] autorelease];
+                src=[[XADPackItXORHandle alloc] initWithHandle:handle
+                                                      password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]];
 				encrypted=YES;
 			}
 			else //if(magic=='PMa6')
 			{
-				src=[[[XADPackItDESHandle alloc] initWithHandle:handle
-				password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]] autorelease];
+                src=[[XADPackItDESHandle alloc] initWithHandle:handle
+                                                      password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]];
 				encrypted=YES;
 			}
 
-			XADStuffItHuffmanHandle *hh=[[[XADStuffItHuffmanHandle alloc] initWithHandle:src] autorelease];
+			XADStuffItHuffmanHandle *hh=[[XADStuffItHuffmanHandle alloc] initWithHandle:src];
 			input=hh->input;
 			fh=hh;
 		}
@@ -208,16 +208,16 @@
 
 		if(crypto==1)
 		{
-			handle=[[[XADPackItXORHandle alloc] initWithHandle:handle length:len
-			password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]] autorelease];
+            handle=[[XADPackItXORHandle alloc] initWithHandle:handle length:len
+                                                     password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]];
 		}
 		else if(crypto==2)
 		{
-			handle=[[[XADPackItDESHandle alloc] initWithHandle:handle length:len
-			password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]] autorelease];
+            handle=[[XADPackItDESHandle alloc] initWithHandle:handle length:len
+                                                     password:[[self password] dataUsingEncoding:NSMacOSRomanStringEncoding]];
 		}
 
-		handle=[[[XADStuffItHuffmanHandle alloc] initWithHandle:handle length:uncomplen] autorelease];
+		handle=[[XADStuffItHuffmanHandle alloc] initWithHandle:handle length:uncomplen];
 		handle=[handle nonCopiedSubHandleFrom:94 length:uncomplen-94];
 	}
 

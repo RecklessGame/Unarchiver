@@ -30,7 +30,7 @@ static uint64_t ParseInteger(CSHandle *fh);
 {
 	if((self=[super initWithName:[handle name] length:length]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		startoffs=[parent offsetInFile];
 		currhandle=nil;
 	}
@@ -39,16 +39,14 @@ static uint64_t ParseInteger(CSHandle *fh);
 
 -(void)dealloc
 {
-	[parent release];
-	[currhandle release];
+	parent = nil;
+    currhandle = nil;
 	
 }
 
 -(void)resetStream
 {
 	[parent seekToFileOffset:startoffs];
-
-	[currhandle release];
 	currhandle=nil;
 
 	state=StreamHeaderState;
@@ -117,18 +115,18 @@ static uint64_t ParseInteger(CSHandle *fh);
 			{
 				switch(ids[i])
 				{
-					case 3: handle=[[[XADDeltaHandle alloc] initWithHandle:handle propertyData:properties[i]] autorelease]; break;
+					case 3: handle=[[XADDeltaHandle alloc] initWithHandle:handle propertyData:properties[i]]; break;
 
-					case 4: handle=[[[XAD7ZipBCJHandle alloc] initWithHandle:handle propertyData:properties[i]] autorelease]; break;
-					case 5: handle=[[[XAD7ZipPPCHandle alloc] initWithHandle:handle propertyData:properties[i]] autorelease]; break;
-					case 6: handle=[[[XAD7ZipIA64Handle alloc] initWithHandle:handle propertyData:properties[i]] autorelease]; break;
-					case 7: handle=[[[XAD7ZipARMHandle alloc] initWithHandle:handle propertyData:properties[i]] autorelease]; break;
-					case 8: handle=[[[XAD7ZipThumbHandle alloc] initWithHandle:handle propertyData:properties[i]] autorelease]; break;
-					case 9: handle=[[[XAD7ZipSPARCHandle alloc] initWithHandle:handle propertyData:properties[i]] autorelease]; break;
+					case 4: handle=[[XAD7ZipBCJHandle alloc] initWithHandle:handle propertyData:properties[i]]; break;
+					case 5: handle=[[XAD7ZipPPCHandle alloc] initWithHandle:handle propertyData:properties[i]]; break;
+					case 6: handle=[[XAD7ZipIA64Handle alloc] initWithHandle:handle propertyData:properties[i]]; break;
+					case 7: handle=[[XAD7ZipARMHandle alloc] initWithHandle:handle propertyData:properties[i]]; break;
+					case 8: handle=[[XAD7ZipThumbHandle alloc] initWithHandle:handle propertyData:properties[i]]; break;
+					case 9: handle=[[XAD7ZipSPARCHandle alloc] initWithHandle:handle propertyData:properties[i]]; break;
 
 					case 33:
 					{
-						XADLZMA2Handle *lh=[[[XADLZMA2Handle alloc] initWithHandle:handle propertyData:properties[i]] autorelease];
+						XADLZMA2Handle *lh=[[XADLZMA2Handle alloc] initWithHandle:handle propertyData:properties[i]];
 						[lh setSeekBackAtEOF:YES];
 						handle=lh;
 					}
@@ -136,7 +134,7 @@ static uint64_t ParseInteger(CSHandle *fh);
 				}
 			}
 
-			currhandle=[handle retain];
+			currhandle=handle;
 
 			//currhandle=[[self decompressHandleForHandleAtBlockHeader:parent] retain];
 
@@ -169,7 +167,6 @@ static uint64_t ParseInteger(CSHandle *fh);
 
 			if([currhandle atEndOfFile])
 			{
-				[currhandle release];
 				currhandle=nil;
 				state=BlockPaddingState;
 			}

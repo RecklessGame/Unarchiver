@@ -157,8 +157,8 @@ static void CalculateSillyTable(int *table,int param)
 	{
 		// TODO: encryption
 		[XADException raiseNotSupportedException];
-		/*handle=[[[XADZipCryptHandle alloc] initWithHandle:handle length:compsize
-		password:[self encodedPassword] testByte:crc>>24] autorelease];*/
+        /*handle=[[XADZipCryptHandle alloc] initWithHandle:handle length:compsize
+         password:[self encodedPassword] testByte:crc>>24];*/
 	}
 
 	int method=[[dict objectForKey:@"ALZipCompressionMethod"] intValue];

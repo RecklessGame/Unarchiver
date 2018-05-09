@@ -6,16 +6,16 @@
 {
 	if((self=[super initWithName:[handle name] length:length]))
 	{
-		parent=[handle retain];
-		digest=[correctdigest retain];
+		parent=handle;
+		digest=correctdigest;
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[parent release];
-	[digest release];
+	parent = nil;
+	digest = nil;
 	
 }
 

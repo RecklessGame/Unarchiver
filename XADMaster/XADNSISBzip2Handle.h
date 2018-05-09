@@ -26,7 +26,7 @@ typedef struct {
 	/* State for interrupting output loop */
 	int writeCopies,writePos,writeRunCountdown,writeCount,writeCurrent;
 	/* I/O tracking data (file handles, buffers, positions, etc.) */
-	CSHandle *inhandle;
+	__unsafe_unretained CSHandle *inhandle;
 	int inbufCount,inbufPos;
 	unsigned char inbuf[IOBUF_SIZE];
 	unsigned int inbufBitCount, inbufBits;

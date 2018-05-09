@@ -8,7 +8,7 @@
 
 +(XADUnarchiver *)unarchiverForArchiveParser:(XADArchiveParser *)archiveparser
 {
-	return [[[self alloc] initWithArchiveParser:archiveparser] autorelease];
+	return [[self alloc] initWithArchiveParser:archiveparser];
 }
 
 +(XADUnarchiver *)unarchiverForPath:(NSString *)path
@@ -20,14 +20,14 @@
 {
 	XADArchiveParser *archiveparser=[XADArchiveParser archiveParserForPath:path error:errorptr];
 	if(!archiveparser) return nil;
-	return [[[self alloc] initWithArchiveParser:archiveparser] autorelease];
+	return [[self alloc] initWithArchiveParser:archiveparser];
 }
 
 -(id)initWithArchiveParser:(XADArchiveParser *)archiveparser
 {
 	if((self=[super init]))
 	{
-		parser=[archiveparser retain];
+		parser=archiveparser;
 		destination=nil;
 		forkstyle=XADDefaultForkStyle;
 		preservepermissions=NO;
@@ -43,10 +43,10 @@
 
 -(void)dealloc
 {
-	[parser release];
-	[destination release];
-	[deferreddirectories release];
-	[deferredlinks release];
+	parser = nil;
+    destination = nil;
+    deferreddirectories = nil;
+    deferredlinks = nil;
 	
 }
 
@@ -61,8 +61,7 @@
 
 -(void)setDestination:(NSString *)destpath
 {
-	[destination autorelease];
-	destination=[destpath retain];
+	destination=destpath;
 }
 
 -(int)macResourceForkStyle { return forkstyle; }
@@ -141,6 +140,7 @@
 
 -(XADError)extractEntryWithDictionary:(NSDictionary *)dict as:(NSString *)path forceDirectories:(BOOL)force
 {
+    XADError error;
     @autoreleasepool {
 
         NSNumber *dirnum=[dict objectForKey:XADIsDirectoryKey];
@@ -170,13 +170,10 @@
         {
             if(![delegate unarchiver:self shouldExtractEntryWithDictionary:dict suggestedPath:&path])
             {
-                [pool release];
                 return XADNoError;
             }
             [delegate unarchiver:self willExtractEntryWithDictionary:dict to:path];
         }
-
-        XADError error;
 
         error=[self _ensureDirectoryExists:[path stringByDeletingLastPathComponent]];
         if(error) goto end;

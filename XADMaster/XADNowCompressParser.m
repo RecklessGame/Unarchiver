@@ -191,7 +191,7 @@
 
 -(CSHandle *)handleForSolidStreamWithObject:(id)obj wantChecksum:(BOOL)checksum
 {
-	return [[[XADNowCompressHandle alloc] initWithHandle:[self handle] files:obj] autorelease];
+	return [[XADNowCompressHandle alloc] initWithHandle:[self handle] files:obj];
 }
 
 -(NSString *)formatName

@@ -5,8 +5,8 @@
 
 -(id)initWithHandle:(CSHandle *)handle length:(off_t)length
 {
-	if((self=[super initWithHandle:[[[XADLZXSwapHandle alloc] initWithHandle:handle] autorelease]
-	length:length windowSize:65536]))
+    if((self=[super initWithHandle:[[XADLZXSwapHandle alloc] initWithHandle:handle]
+                            length:length windowSize:65536]))
 	{
 		maincode=offsetcode=nil;
 	}
@@ -15,8 +15,8 @@
 
 -(void)dealloc
 {
-	[maincode release];
-	[offsetcode release];
+	maincode = nil;
+	offsetcode = nil;
 	
 }
 
@@ -77,8 +77,8 @@
 
 -(void)readBlockHeaderAtPosition:(off_t)pos
 {
-	[maincode release];
-	[offsetcode release];
+	maincode = nil;
+	offsetcode = nil;
 	maincode=offsetcode=nil;
 
 	blocktype=CSInputNextBitStringLE(input,3);
@@ -156,11 +156,11 @@
 			i+=n;
 		}
 
-		[precode release];
+		precode = nil;
 	}
 	@catch(id e)
 	{
-		[precode release];
+		precode = nil;
 		@throw;
 	}
 }

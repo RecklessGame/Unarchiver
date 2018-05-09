@@ -790,10 +790,10 @@ packedStreams:(NSArray *)packedstreams packedStreamIndex:(int *)packedstreaminde
                                                   jumpHandle:inhandle2 rangeHandle:inhandle3 length:size];
 		}
 		case 0x03030205: return [[XAD7ZipPPCHandle alloc] initWithHandle:inhandle length:size propertyData:props];
-		//case 0x03030301: return [[[XAD7ZipAlphaHandle alloc] initWithHandle:inhandle length:size propertyData:props] autorelease];
+		//case 0x03030301: return [[XAD7ZipAlphaHandle alloc] initWithHandle:inhandle length:size propertyData:props];
 		case 0x03030401: return [[XAD7ZipIA64Handle alloc] initWithHandle:inhandle length:size propertyData:props];
 		case 0x03030501: return [[XAD7ZipARMHandle alloc] initWithHandle:inhandle length:size propertyData:props];
-		//case 0x03030605: return [[[XAD7ZipM68kHandle alloc] initWithHandle:inhandle length:size propertyData:props] autorelease];
+		//case 0x03030605: return [[XAD7ZipM68kHandle alloc] initWithHandle:inhandle length:size propertyData:props];
 		case 0x03030701: return [[XAD7ZipThumbHandle alloc] initWithHandle:inhandle length:size propertyData:props];
 		case 0x03030805: return [[XAD7ZipSPARCHandle alloc] initWithHandle:inhandle length:size propertyData:props];
 		case 0x03040100:

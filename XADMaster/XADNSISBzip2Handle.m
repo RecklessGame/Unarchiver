@@ -10,7 +10,7 @@ static int start_bunzip(bunzip_data *bd,CSHandle *inhandle,uint32_t *dbuf,bool h
 {
 	if((self=[super initWithName:[handle name] length:length]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		startoffs=[handle offsetInFile];
 		hasrand=hasrandbit;
 		[self setBlockPointer:outblock];
@@ -20,7 +20,7 @@ static int start_bunzip(bunzip_data *bd,CSHandle *inhandle,uint32_t *dbuf,bool h
 
 -(void)dealloc
 {
-	[parent release];
+	parent = nil;
 	
 }
 

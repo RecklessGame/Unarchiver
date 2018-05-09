@@ -167,7 +167,7 @@
 	switch(method)
 	{
 		case 0: return handle;
-		case 2: return [[[XADLZXHandle alloc] initWithHandle:handle length:length] autorelease];
+		case 2: return [[XADLZXHandle alloc] initWithHandle:handle length:length];
 		default: return nil;
 	}
 }

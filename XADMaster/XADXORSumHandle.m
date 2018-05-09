@@ -6,7 +6,7 @@
 {
 	if((self=[super initWithName:[handle name] length:length]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		correctchecksum=correct;
 	}
 	return self;
@@ -14,7 +14,7 @@
 
 -(void)dealloc
 {
-	[parent release];
+	parent = nil;
 	
 }
 

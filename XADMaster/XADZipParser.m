@@ -1029,7 +1029,7 @@ isLastEntry:(BOOL)islastentry
 		// extensions for >4GB files, so size might be entirely wrong, and
 		// archivers are expected to just keep unarchving anyway.
 		case 8: return [CSZlibHandle deflateHandleWithHandle:parent];
-//		case 8: return [[[XADDeflateHandle alloc] initWithHandle:parent length:size] autorelease];
+//		case 8: return [[XADDeflateHandle alloc] initWithHandle:parent length:size];
 		case 9: return [[XADDeflateHandle alloc] initWithHandle:parent length:size variant:XADDeflate64DeflateVariant];
 		case 12: return [CSBzip2Handle bzip2HandleWithHandle:parent length:size];
 		case 14:

@@ -38,7 +38,7 @@ foundEntryWithDictionary:(NSDictionary *)dict
 		XADArchiveParser *parser=[XADArchiveParser archiveParserForHandle:fh
 		name:[[dict objectForKey:XADFileNameKey] string]];
 
-		[parser setDelegate:[[ArchiveTester new] autorelease]];
+		[parser setDelegate:[ArchiveTester new]];
 		[parser parse];
 	}
 }
@@ -87,7 +87,7 @@ int main(int argc,char **argv)
 		@try {
 			XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename];
 
-			[parser setDelegate:[[ArchiveTester new] autorelease]];
+			[parser setDelegate:[ArchiveTester new]];
 
 			NSString *pass=FigureOutPassword(filename);
 			if(pass) [parser setPassword:pass];

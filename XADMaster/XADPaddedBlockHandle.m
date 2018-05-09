@@ -7,7 +7,7 @@ logicalBlockSize:(int)logical physicalBlockSize:(int)physical;
 {
 	if((self=[super initWithName:[handle name]]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		startoffset=start;
 		logicalsize=logical;
 		physicalsize=physical;
@@ -17,7 +17,7 @@ logicalBlockSize:(int)logical physicalBlockSize:(int)physical;
 
 -(void)dealloc
 {
-	[parent release];
+	parent = nil;
 	
 }
 

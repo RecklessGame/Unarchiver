@@ -32,8 +32,6 @@
 		blocksize=CSInputNextBitString(input,16);
 		blockpos=0;
 
-		[literalcode release];
-		[distancecode release];
 		literalcode=nil;
 		distancecode=nil;
 
@@ -99,7 +97,7 @@
 	int num=CSInputNextBitString(input,9);
 	if(num==0)
 	{
-		[metacode release];
+        metacode = nil;
 
 		int val=CSInputNextBitString(input,9);
 		XADPrefixCode *code=[XADPrefixCode new];
@@ -129,7 +127,7 @@
 			else codelengths[n++]=c-2;
 		}
 
-		[metacode release];
+        metacode = nil;
 
 		return [[XADPrefixCode alloc] initWithLengths:codelengths numberOfSymbols:num maximumLength:16 shortestCodeIsZeros:YES];
 	}

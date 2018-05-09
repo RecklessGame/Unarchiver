@@ -6,8 +6,8 @@
 {
 	if((self=[super initWithName:[handle name]]))
 	{
-		parent=[handle retain];
-		password=[passdata retain];
+		parent=handle;
+		password=passdata;
 		passwordbytes=[password bytes];
 		passwordlength=[password length];
 	}
@@ -22,8 +22,8 @@
 
 -(void)dealloc
 {
-	[parent release];
-	[password release];
+	parent = nil;
+	password = nil;
 	
 }
 

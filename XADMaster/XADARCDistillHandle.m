@@ -42,8 +42,8 @@ static const int offsetcodes[0x40]=
 
 -(void)dealloc
 {
-	[maincode release];
-	[offsetcode release];
+	maincode = nil;
+	offsetcode = nil;
 	
 }
 
@@ -73,7 +73,7 @@ static void BuildCodeFromTree(XADPrefixCode *code,int *tree,int node,int numnode
 	int nodes[numnodes];
 	for(int i=0;i<numnodes;i++) nodes[i]=CSInputNextBitStringLE(input,codelength);
 
-	[maincode release];
+	maincode = nil;
 	maincode=[XADPrefixCode new];
 
 	[maincode startBuildingTree];

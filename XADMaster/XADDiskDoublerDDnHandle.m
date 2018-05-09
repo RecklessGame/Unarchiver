@@ -14,7 +14,7 @@
 
 -(void)dealloc
 {
-	[lengthcode release];
+	lengthcode = nil;;
 	
 }
 
@@ -183,8 +183,8 @@
 
         CSInputSeekToBufferOffset(input,lengthstart);
 
-        [lengthcode release];
-        lengthcode=[[self readCode] retain];
+        lengthcode = nil;;
+        lengthcode=[self readCode];
 
     } // autorelease pool
 }

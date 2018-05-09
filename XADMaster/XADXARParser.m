@@ -89,7 +89,7 @@ static const NSString *DateFormat=@"Date";
 	CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:[fh nonCopiedSubHandleFrom:headsize length:tablecompsize]];
 	NSData *data=[zh readDataOfLength:(int)tableuncompsize];
 
-	//NSLog(@"%@",[[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
+	//NSLog(@"%@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
 
 	NSXMLParser *xml=[[NSXMLParser alloc] initWithData:data];
 	[xml setDelegate:self];
@@ -555,7 +555,7 @@ length:(NSNumber *)length size:(NSNumber *)size checksum:(NSData *)checksum chec
 			if(first==0xff)
 			{
 				/*[handle seekToFileOffset:0];
-				return [[[XADXZHandle alloc] initWithHandle:handle length:sizeval ...] autorelease];
+				return [[XADXZHandle alloc] initWithHandle:handle length:sizeval ...];
 				*/
 				return nil;
 			}

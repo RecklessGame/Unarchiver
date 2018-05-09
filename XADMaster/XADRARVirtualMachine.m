@@ -100,7 +100,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 
 		if([self parseByteCode:bytes length:length]) return self;
 
-		[self release];
+        //[self release];
 	}
 
 	return nil;
@@ -108,9 +108,9 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 
 -(void)dealloc
 {
-	[opcodes release];
-	[staticdata release];
-	[globalbackup release];
+	opcodes = nil;
+	staticdata = nil;
+	globalbackup = nil;
 	
 }
 
@@ -140,7 +140,7 @@ uint32_t CSInputNextRARVMNumber(CSInputBuffer *input)
 
 		for(int i=0;i<length;i++) databytes[i]=CSInputNextBitString(input,8);
 
-		staticdata=[data retain];
+		staticdata=data;
 	}
 
 	// Read instructions.
@@ -293,7 +293,7 @@ value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isRelativeJump:(BOOL)isrel cu
 {
 	if((self=[super init]))
 	{
-		programcode=[code retain];
+		programcode=code;
 
 		if(data)
 		{
@@ -310,8 +310,8 @@ value:(uint32_t *)valueptr byteMode:(BOOL)bytemode isRelativeJump:(BOOL)isrel cu
 
 -(void)dealloc
 {
-	[programcode release];
-	[globaldata release];
+    programcode = nil;
+    globaldata = nil;
 	
 }
 

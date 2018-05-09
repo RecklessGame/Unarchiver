@@ -220,7 +220,7 @@
 
 	if([path length]==0) return [NSArray arrayWithObject:host];
 
-	NSMutableArray *components=[[[path pathComponents] mutableCopy] autorelease];
+	NSMutableArray *components=[[path pathComponents] mutableCopy];
 	[components replaceObjectAtIndex:0 withObject:host];
 
 	if([[components lastObject] isEqual:@"/"]) [components removeLastObject];
@@ -245,7 +245,6 @@
 	{
 		// A file with the same name exists. Remove the file, insert a new directory,
 		// then insert the file in the new directory as "index.html".
-		[[entry retain] autorelease];
 		[dir removeObjectForKey:name];
 
 		NSMutableDictionary *newdir=[NSMutableDictionary dictionary];

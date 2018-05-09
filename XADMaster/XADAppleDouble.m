@@ -126,8 +126,8 @@ resourceForkLength:(off_t *)resourcelengthptr extendedAttributes:(NSDictionary *
 		if(minoffset!=curroffset) [fh seekToFileOffset:minoffset];
 		NSData *data=[fh readDataOfLength:entries[minindex].length];
 
-		NSString *name=[[[NSString alloc] initWithBytes:entries[minindex].namebytes
-		length:entries[minindex].namelen-1 encoding:NSUTF8StringEncoding] autorelease];
+        NSString *name=[[NSString alloc] initWithBytes:entries[minindex].namebytes
+                                                length:entries[minindex].namelen-1 encoding:NSUTF8StringEncoding];
 
 		[extattrs setObject:data forKey:name];
 	}

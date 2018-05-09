@@ -7,7 +7,7 @@
 {
 	if((self=[super initWithName:[handle name]]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		startoffs=[parent offsetInFile];
 		buffer=NULL;
 		currsize=0;
@@ -18,8 +18,8 @@
 -(void)dealloc
 {
 	free(buffer);
-	[parent release];
-	
+    buffer = nil;
+    parent = nil;
 }
 
 -(void)resetBlockStream

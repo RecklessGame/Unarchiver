@@ -7,7 +7,7 @@ typedef struct RARBlock
 	int headersize;
 	off_t datasize;
 	off_t start,datastart;
-	CSHandle *fh;
+	__unsafe_unretained CSHandle *fh;
 } RARBlock;
 
 typedef struct RARFileHeader
@@ -17,7 +17,8 @@ typedef struct RARFileHeader
 	uint32_t crc,dostime;
 	int version,method,namelength;
 	uint32_t attrs;
-	NSData *namedata,*salt;
+    __unsafe_unretained NSData *namedata;
+    __unsafe_unretained NSData *salt;
 } RARFileHeader;
 
 @interface XADRARParser:XADArchiveParser

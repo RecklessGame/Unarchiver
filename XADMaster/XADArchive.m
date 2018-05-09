@@ -19,7 +19,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 +(XADArchive *)archiveForFile:(NSString *)filename
 {
-	return [[[XADArchive alloc] initWithFile:filename] autorelease];
+	return [[XADArchive alloc] initWithFile:filename];
 }
 
 +(XADArchive *)recursiveArchiveForFile:(NSString *)filename
@@ -29,10 +29,10 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	while([archive numberOfEntries]==1)
 	{
 		XADArchive *subarchive=[[XADArchive alloc] initWithArchive:archive entry:0];
-		if(subarchive) archive=[subarchive autorelease];
+		if(subarchive) archive=subarchive;
 		else
 		{
-			[subarchive release];
+			subarchive = nil;
 			break;
 		}
 	}
@@ -61,8 +61,8 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		immediatesize=0;
 		parentarchive=nil;
 
-		dataentries=[[NSMutableArray array] retain];
-		resourceentries=[[NSMutableArray array] retain];
+		dataentries=[NSMutableArray array];
+		resourceentries=[NSMutableArray array];
 		namedict=nil;
  	}
 	return self;
@@ -78,14 +78,14 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	{
 		delegate=del;
 
-		parser=[[XADArchiveParser archiveParserForPath:file] retain];
+		parser=[XADArchiveParser archiveParserForPath:file];
 		if(parser)
 		{
 			if([self _parseWithErrorPointer:error]) return self;
 		}
 		else if(error) *error=XADDataFormatError;
 
-		[self release];
+		//[self release];
 	}
 
 	return nil;
@@ -103,14 +103,13 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 	{
 		delegate=del;
 
-		parser=[[XADArchiveParser archiveParserForHandle:[CSMemoryHandle memoryHandleForReadingData:data] name:@""] retain];
-		if(parser)
-		{
+		parser=[XADArchiveParser archiveParserForHandle:[CSMemoryHandle memoryHandleForReadingData:data] name:@""];
+		if(parser) {
 			if([self _parseWithErrorPointer:error]) return self;
 		}
 		else if(error) *error=XADDataFormatError;
 
-		[self release];
+		//[self release];
 	}
 	return nil;
 }
@@ -125,13 +124,13 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 {
 	if((self=[self init]))
 	{
-		parentarchive=[otherarchive retain];
+		parentarchive=otherarchive;
 		delegate=del;
 
 		CSHandle *handle=[otherarchive handleForEntry:n error:error];
 		if(handle)
 		{
-			parser=[[XADArchiveParser archiveParserForHandle:handle name:[otherarchive nameOfEntry:n]] retain];
+			parser=[XADArchiveParser archiveParserForHandle:handle name:[otherarchive nameOfEntry:n]];
 			if(parser)
 			{
 				if([self _parseWithErrorPointer:error]) return self;
@@ -139,7 +138,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 			else if(error) *error=XADDataFormatError;
 		}
 
-		[self release];
+		//[self release];
 	}
 
 	return nil;
@@ -157,16 +156,16 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 {
 	if((self=[self init]))
 	{
-		parentarchive=[otherarchive retain];
+		parentarchive=otherarchive;
 		immediatedestination=destination;
 		immediatesubarchives=sub;
 		delegate=otherarchive;
 
 		immediatesize=[otherarchive representativeSizeOfEntry:n];
 
-		parser=[[XADArchiveParser archiveParserForEntryWithDictionary:
-		[otherarchive dataForkParserDictionaryForEntry:n]
-		archiveParser:otherarchive->parser wantChecksum:YES error:error] retain];
+        parser=[XADArchiveParser archiveParserForEntryWithDictionary:
+                [otherarchive dataForkParserDictionaryForEntry:n]
+                                                       archiveParser:otherarchive->parser wantChecksum:YES error:error];
 		if(parser)
 		{
 			if([self _parseWithErrorPointer:error])
@@ -189,7 +188,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 		}
 		else if(error) *error=XADSubArchiveError;
 
-		[self release];
+		//[self release];
 	}
 
 	return nil;
@@ -198,12 +197,12 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 -(void)dealloc
 {
-	[parser release];
-	[unarchiver release];
-	[dataentries release];
-	[resourceentries release];
-	[namedict release];
-	[parentarchive release];
+	parser = nil;
+	unarchiver = nil;
+    dataentries = nil;
+    resourceentries = nil;
+	namedict = nil;
+    parentarchive = nil;
 
 	
 }
@@ -212,12 +211,12 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 -(BOOL)_parseWithErrorPointer:(XADError *)error
 {
-	unarchiver=[[XADUnarchiver unarchiverForArchiveParser:parser] retain];
+	unarchiver=[XADUnarchiver unarchiverForArchiveParser:parser];
 
 	[parser setDelegate:self];
 	[unarchiver setDelegate:self];
 
-	namedict=[[NSMutableDictionary dictionary] retain];
+	namedict=[NSMutableDictionary dictionary];
 
 	XADError parseerror=[parser parseWithoutExceptions];
 	if(parseerror)
@@ -228,7 +227,7 @@ NSString *XADFinderFlags=@"XADFinderFlags";
 
 	if(immediatefailed&&error) *error=lasterror;
 
-	[namedict release];
+	namedict = nil;
 	namedict=nil;
 
 	return lasterror==XADNoError||[dataentries count]!=0;
@@ -873,7 +872,7 @@ dataFork:(BOOL)datafork resourceFork:(BOOL)resfork
 
 		BOOL res=subarchive&&![subarchive immediateExtractionFailed];
 
-		[subarchive release];
+        subarchive = nil;
 
 		if(res) return YES;
 		else if(err==XADBreakError||err==XADDataFormatError) return NO;
@@ -1172,7 +1171,7 @@ fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress
 	NSMutableData *terminateddata=[[NSMutableData alloc] initWithData:data];
 	[terminateddata increaseLengthBy:1]; // append a 0 byte
 	NSStringEncoding enc=[self archive:archive encodingForName:[terminateddata bytes] guess:guess confidence:confidence];
-	[terminateddata release];
+    terminateddata = nil;
 	return enc;
 }
 
@@ -1181,7 +1180,7 @@ fileFraction:(double)fileprogress estimatedTotalFraction:(double)totalprogress
 	// Default implementation calls old method
 	NSMutableData *terminateddata=[[NSMutableData alloc] initWithData:data];
 	XADAction action=[self archive:archive nameDecodingDidFailForEntry:n bytes:[terminateddata bytes]];
-	[terminateddata release];
+    terminateddata = nil;
 	return action;
 }
 

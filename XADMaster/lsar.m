@@ -34,7 +34,7 @@ int main(int argc,const char **argv)
 {
     @autoreleasepool {
 
-        CSCommandLineParser *cmdline=[[CSCommandLineParser new] autorelease];
+        CSCommandLineParser *cmdline=[CSCommandLineParser new];
 
         [cmdline setUsageHeader:
          @"lsar " VERSION_STRING @" (" @__DATE__ @"), a tool for listing the contents of archive files.\n"
@@ -172,7 +172,7 @@ int main(int argc,const char **argv)
                 else [unarchiver addGlobFilter:filter];
             }
 
-            [unarchiver setDelegate:[[JSONLister new] autorelease]];
+            [unarchiver setDelegate:[JSONLister new]];
 
             [printer startPrintingDictionaryObjectForKey:@"lsarContents"];
             [printer startPrintingArray];
@@ -268,7 +268,7 @@ int main(int argc,const char **argv)
                 else [unarchiver addGlobFilter:filter];
             }
 
-            [unarchiver setDelegate:[[[Lister alloc] init] autorelease]];
+            [unarchiver setDelegate:[[Lister alloc] init]];
 
             XADError parseerror=[unarchiver parse];
 

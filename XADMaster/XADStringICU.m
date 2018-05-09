@@ -58,7 +58,7 @@
 	}
 	else
 	{
-		return [[[NSString alloc] initWithCharactersNoCopy:charbuf length:numchars freeWhenDone:YES] autorelease];
+		return [[NSString alloc] initWithCharactersNoCopy:charbuf length:numchars freeWhenDone:YES];
 	}
 }
 

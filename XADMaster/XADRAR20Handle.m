@@ -8,7 +8,7 @@
 	if((self=[super initWithName:[parent filename] windowSize:0x100000]))
 	{
 		parser=parent;
-		files=[filearray retain];
+        files=filearray;
 
 		maincode=nil;
 		offsetcode=nil;
@@ -20,11 +20,11 @@
 
 -(void)dealloc
 {
-	[files release];
-	[maincode release];
-	[offsetcode release];
-	[lengthcode release];
-	for(int i=0;i<4;i++) [audiocode[i] release];
+	files = nil;
+	maincode = nil;
+	offsetcode = nil;
+	lengthcode = nil;;
+    for(int i=0;i<4;i++) audiocode[i] = nil;
 	
 }
 
@@ -166,10 +166,10 @@
 
 -(void)allocAndParseCodes
 {
-	[maincode release]; maincode=nil;
-	[offsetcode release]; offsetcode=nil;
-	[lengthcode release]; lengthcode=nil;
-	for(int i=0;i<4;i++) { [audiocode[i] release]; audiocode[i]=nil; }
+	maincode = nil; maincode=nil;
+	offsetcode = nil; offsetcode=nil;
+	lengthcode = nil;; lengthcode=nil;
+	for(int i=0;i<4;i++) { audiocode[i]=nil; }
 
 	audioblock=CSInputNextBit(input);
 
@@ -223,11 +223,11 @@
 			}
 		}
 
-		[precode release];
+		precode = nil;
 	}
 	@catch(id e)
 	{
-		[precode release];
+		precode = nil;
 		@throw;
 	}
 

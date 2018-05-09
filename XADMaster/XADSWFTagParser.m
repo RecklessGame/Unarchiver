@@ -11,28 +11,27 @@ NSString *SWFNoMoreTagsException=@"SWFNoMoreTagsException";
 
 +(XADSWFTagParser *)parserWithHandle:(CSHandle *)handle
 {
-	return [[[XADSWFTagParser alloc] initWithHandle:handle] autorelease];
+	return [[XADSWFTagParser alloc] initWithHandle:handle];
 }
 
 +(XADSWFTagParser *)parserForPath:(NSString *)path
 {
 	CSFileHandle *handle=[CSFileHandle fileHandleForReadingAtPath:path];
-	return [[[XADSWFTagParser alloc] initWithHandle:handle] autorelease];
+	return [[XADSWFTagParser alloc] initWithHandle:handle];
 }
 
 -(id)initWithHandle:(CSHandle *)handle
 {
 	if((self=[super init]))
 	{
-		fh=[handle retain];
+		fh=handle;
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[fh release];
-	
+    fh = nil;
 }
 
 -(void)parseHeader
@@ -48,9 +47,7 @@ NSString *SWFNoMoreTagsException=@"SWFNoMoreTagsException";
 
 	if(magic[0]=='C')
 	{
-		CSZlibHandle *zh=[CSZlibHandle zlibHandleWithHandle:fh];
-		[fh release];
-		fh=[zh retain];
+		fh=[CSZlibHandle zlibHandleWithHandle:fh];
 		compressed=YES;
 	}
 	else

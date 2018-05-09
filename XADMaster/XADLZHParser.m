@@ -66,7 +66,7 @@
 		int attrs=[fh readUInt8];
 		int level=[fh readUInt8];
 
-		NSString *compname=[[[NSString alloc] initWithBytes:method length:5 encoding:NSISOLatin1StringEncoding] autorelease];
+		NSString *compname=[[NSString alloc] initWithBytes:method length:5 encoding:NSISOLatin1StringEncoding];
 
 		NSMutableDictionary *dict=[NSMutableDictionary dictionaryWithObjectsAndKeys:
 			[NSNumber numberWithUnsignedInt:size],XADFileSizeKey,
@@ -351,37 +351,37 @@
 	}
 	else if([method isEqual:@"-lh1-"])
 	{
-		handle=[[[XADLZHDynamicHandle alloc] initWithHandle:handle length:size] autorelease];
+		handle=[[XADLZHDynamicHandle alloc] initWithHandle:handle length:size];
 	}
 	else if([method isEqual:@"-lh2-"])
 	{
 		[self reportInterestingFileWithReason:@"-lh2- compression"];
-		handle=[[[XADLZH2Handle alloc] initWithHandle:handle length:size] autorelease];
+		handle=[[XADLZH2Handle alloc] initWithHandle:handle length:size];
 	}
 	else if([method isEqual:@"-lh3-"])
 	{
 		[self reportInterestingFileWithReason:@"-lh3- compression"];
-		handle=[[[XADLZH3Handle alloc] initWithHandle:handle length:size] autorelease];
+		handle=[[XADLZH3Handle alloc] initWithHandle:handle length:size];
 	}
 	else if([method isEqual:@"-lh4-"])
 	{
-		handle=[[[XADLZHStaticHandle alloc] initWithHandle:handle length:size windowBits:12] autorelease];
+		handle=[[XADLZHStaticHandle alloc] initWithHandle:handle length:size windowBits:12];
 	}
 	else if([method isEqual:@"-lh5-"])
 	{
-		handle=[[[XADLZHStaticHandle alloc] initWithHandle:handle length:size windowBits:13] autorelease];
+		handle=[[XADLZHStaticHandle alloc] initWithHandle:handle length:size windowBits:13];
 	}
 	else if([method isEqual:@"-lh6-"])
 	{
-		handle=[[[XADLZHStaticHandle alloc] initWithHandle:handle length:size windowBits:15] autorelease];
+		handle=[[XADLZHStaticHandle alloc] initWithHandle:handle length:size windowBits:15];
 	}
 	else if([method isEqual:@"-lh7-"])
 	{
-		handle=[[[XADLZHStaticHandle alloc] initWithHandle:handle length:size windowBits:16] autorelease];
+		handle=[[XADLZHStaticHandle alloc] initWithHandle:handle length:size windowBits:16];
 	}
 	else if([method isEqual:@"-lzs-"])
 	{
-		handle=[[[XADLArcLZSHandle alloc] initWithHandle:handle length:size] autorelease];
+		handle=[[XADLArcLZSHandle alloc] initWithHandle:handle length:size];
 	}
 	else if([method isEqual:@"-lz4-"])
 	{
@@ -389,7 +389,7 @@
 	}
 	else if([method isEqual:@"-lz5-"])
 	{
-		handle=[[[XADLArcLZ5Handle alloc] initWithHandle:handle length:size] autorelease];
+		handle=[[XADLArcLZ5Handle alloc] initWithHandle:handle length:size];
 	}
 	else if([method isEqual:@"-pm0-"])
 	{
@@ -397,11 +397,11 @@
 	}
 	else if([method isEqual:@"-pm1-"])
 	{
-		handle=[[[XADPMArc1Handle alloc] initWithHandle:handle length:size] autorelease];
+		handle=[[XADPMArc1Handle alloc] initWithHandle:handle length:size];
 	}
 	else if([method isEqual:@"-pm2-"])
 	{
-		handle=[[[XADPMArc2Handle alloc] initWithHandle:handle length:size] autorelease];
+		handle=[[XADPMArc2Handle alloc] initWithHandle:handle length:size];
 	}
 	else // not supported
 	{

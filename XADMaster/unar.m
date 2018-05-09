@@ -20,7 +20,7 @@ int main(int argc,const char **argv)
 
     @autoreleasepool {
 
-	CSCommandLineParser *cmdline=[[CSCommandLineParser new] autorelease];
+	CSCommandLineParser *cmdline=[CSCommandLineParser new];
 
 	[cmdline setUsageHeader:
 	@"unar " VERSION_STRING @" (" @__DATE__ @"), a tool for extracting the contents of archive files.\n"
@@ -234,7 +234,7 @@ int main(int argc,const char **argv)
 		else [unarchiver addGlobFilter:filter];
 	}
 
-	[unarchiver setDelegate:[[Unarchiver new] autorelease]];
+	[unarchiver setDelegate:[Unarchiver new]];
 
 	XADError parseerror=[unarchiver parse];
 

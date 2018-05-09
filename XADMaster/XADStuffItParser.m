@@ -293,7 +293,7 @@
 		case 1: handle=[[XADRLE90Handle alloc] initWithHandle:handle length:size]; break;
 		case 2: handle=[[XADCompressHandle alloc] initWithHandle:handle length:size flags:0x8e]; break;
 		case 3: handle=[[XADStuffItHuffmanHandle alloc] initWithHandle:handle length:size]; break;
-		//case 5: handle=[[[XADStuffItLZAHHandle alloc] initWithHandle:handle inputLength:compsize outputLength:size] autorelease]; break;
+		//case 5: handle=[[XADStuffItLZAHHandle alloc] initWithHandle:handle inputLength:compsize outputLength:size]; break;
 		case 5: handle=[[XADLZHDynamicHandle alloc] initWithHandle:handle length:size]; break;
 		// TODO: Figure out if the initialization of the window differs between LHArc and StuffIt
 		//case 6:  fixed huffman

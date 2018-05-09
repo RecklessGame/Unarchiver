@@ -16,7 +16,7 @@ static ISzAlloc allocator={Alloc,Free};
 {
 	if((self=[super initWithName:[handle name] length:length]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		startoffs=[parent offsetInFile];
 		seekback=NO;
 
@@ -27,8 +27,6 @@ static ISzAlloc allocator={Alloc,Free};
 			return self;
 		}
 	}
-
-	[self release];
 	return nil;
 }
 
@@ -36,7 +34,7 @@ static ISzAlloc allocator={Alloc,Free};
 {
 	Lzma2Dec_Free(&lzma,&allocator);
 
-	[parent release];
+	parent = nil;
 	
 
 }

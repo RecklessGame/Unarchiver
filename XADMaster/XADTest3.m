@@ -114,7 +114,7 @@ NSString *EscapeString(NSString *str)
 	{
 		[fh seekToFileOffset:0];
 		XADArchiveParser *parser=[XADArchiveParser archiveParserForHandle:fh name:name];
-		[parser setDelegate:[[[ArchiveTester alloc] initWithIndentLevel:indent+2] autorelease]];
+		[parser setDelegate:[[ArchiveTester alloc] initWithIndentLevel:indent+2]];
 		[parser parse];
 	}
 }
@@ -151,7 +151,7 @@ int main(int argc,char **argv)
 		NSString *filename=[NSString stringWithUTF8String:argv[i]];
 		XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename];
 
-		[parser setDelegate:[[[ArchiveTester alloc] initWithIndentLevel:2] autorelease]];
+		[parser setDelegate:[[ArchiveTester alloc] initWithIndentLevel:2]];
 
 		NSString *pass=FigureOutPassword(filename);
 		if(pass) [parser setPassword:pass];

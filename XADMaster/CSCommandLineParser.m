@@ -77,26 +77,22 @@ static NSString *AliasOptionType=@"AliasOptionType";
 
 -(void)setProgramName:(NSString *)name
 {
-	[programname autorelease];
-	programname=[name retain];
+	programname=[name copy];
 }
 
 -(void)setUsageHeader:(NSString *)header
 {
-	[usageheader autorelease];
-	usageheader=[header retain];
+	usageheader=[header copy];
 }
 
 -(void)setUsageFooter:(NSString *)footer
 {
-	[usagefooter autorelease];
-	usagefooter=[footer retain];
+	usagefooter=[footer copy];
 }
 
 -(void)setProgramVersion:(NSString *)version
 {
-	[programversion autorelease];
-	programversion=[version retain];
+	programversion=[version copy];
 }
 
 
@@ -632,8 +628,7 @@ name:(NSString *)option value:(NSString *)value errors:(NSMutableArray *)errors
 
 -(void)_parseRemainingArguments:(NSArray *)remainingarguments errors:(NSMutableArray *)errors
 {
-	[remainingargumentarray autorelease];
-	remainingargumentarray=[remainingarguments retain];
+	remainingargumentarray=remainingarguments;
 }
 
 -(void)_enforceRequirementsWithErrors:(NSMutableArray *)errors

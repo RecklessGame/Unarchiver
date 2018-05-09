@@ -19,7 +19,7 @@
 
 -(void)dealloc
 {
-	[code release];
+	code = nil;
 	
 }
 
@@ -50,7 +50,7 @@ static void BuildCodeFromTree(XADPrefixCode *code,int *tree,int node,int numnode
 
 	for(int i=0;i<numnodes;i++) nodes[i]=CSInputNextInt16LE(input);
 
-	[code release];
+	code = nil;
 	code=[XADPrefixCode new];
 
 	[code startBuildingTree];

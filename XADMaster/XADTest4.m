@@ -62,7 +62,7 @@
 		[fh seekToFileOffset:0];
 
 		XADArchiveParser *parser=[XADArchiveParser archiveParserForHandle:fh name:[[dict objectForKey:XADFileNameKey] string]];
-		ArchiveTester *tester=[[[ArchiveTester alloc] initWithIndentLevel:indent+2] autorelease];
+		ArchiveTester *tester=[[ArchiveTester alloc] initWithIndentLevel:indent+2];
 		[parser setDelegate:tester];
 		[parser parse];
 		[tester done:parser];
@@ -100,7 +100,7 @@ int main(int argc,char **argv)
 
 		NSString *filename=[NSString stringWithUTF8String:argv[i]];
 		XADArchiveParser *parser=[XADArchiveParser archiveParserForPath:filename];
-		ArchiveTester *tester=[[[ArchiveTester alloc] initWithIndentLevel:2] autorelease];
+		ArchiveTester *tester=[[ArchiveTester alloc] initWithIndentLevel:2];
 		[parser setDelegate:tester];
 
 		NSString *pass=FigureOutPassword(filename);

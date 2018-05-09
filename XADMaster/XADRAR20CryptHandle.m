@@ -7,17 +7,17 @@
 {
 	if((self=[super initWithName:[handle name] length:length]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		startoffs=[handle offsetInFile];
-		password=[passdata retain];
+		password=passdata;
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[parent release];
-	[password release];
+	parent = nil;
+	password = nil;
 	
 }
 

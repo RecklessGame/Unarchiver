@@ -26,8 +26,8 @@ static const char PDFPasswordPadding[32]=
 	if(self=[super init])
 	{
 		algorithms=nil;
-		encrypt=[encryptdict retain];
-		permanentid=[permanentiddata retain];
+		encrypt=encryptdict;
+		permanentid=permanentiddata;
 		password=nil;
 		keys=[NSMutableDictionary new];
 
@@ -40,7 +40,7 @@ static const char PDFPasswordPadding[32]=
 		(version!=1 && version!=2 && version!=4) ||
 		(revision!=2 && revision!=3 && revision!=4))
 		{
-			[self release];
+			//[self release];
 			[NSException raise:PDFUnsupportedEncryptionException format:@"PDF encryption filter \"%@\" version %d, revision %d is not supported.",filter,version,revision];
 		}
 
@@ -49,11 +49,11 @@ static const char PDFPasswordPadding[32]=
 			int length;
 			if(revision>=3) length=[encrypt intValueForKey:@"Length" default:40];
 			else length=40;
-			stringalgorithm=streamalgorithm=[[[PDFRC4Algorithm alloc] initWithLength:length/8 handler:self] retain];
+			stringalgorithm=streamalgorithm=[[PDFRC4Algorithm alloc] initWithLength:length/8 handler:self];
 		}
 		else
 		{
-			algorithms=[[NSMutableDictionary dictionary] retain];
+			algorithms=[NSMutableDictionary dictionary];
 
 			NSDictionary *filters=[encrypt objectForKey:@"CF"];
 			NSEnumerator *enumerator=[filters keyEnumerator];
@@ -64,15 +64,15 @@ static const char PDFPasswordPadding[32]=
 				NSString *cfm=[dict objectForKey:@"CFM"];
 				int length=[dict intValueForKey:@"Length" default:5];
 
-				if([cfm isEqual:@"V2"]) [algorithms setObject:[[[PDFRC4Algorithm alloc] initWithLength:length handler:self] autorelease] forKey:key];
-				else if([cfm isEqual:@"AESV2"]) [algorithms setObject:[[[PDFAESAlgorithm alloc] initWithLength:length handler:self] autorelease] forKey:key];
+				if([cfm isEqual:@"V2"]) [algorithms setObject:[[PDFRC4Algorithm alloc] initWithLength:length handler:self] forKey:key];
+				else if([cfm isEqual:@"AESV2"]) [algorithms setObject:[[PDFAESAlgorithm alloc] initWithLength:length handler:self] forKey:key];
 				else [NSException raise:PDFUnsupportedEncryptionException format:@"PDF encryption module \"%@\" is not supported.",cfm];
 			}
 
-			[algorithms setObject:[[PDFNoAlgorithm new] autorelease] forKey:@"Identity"];
+			[algorithms setObject:[PDFNoAlgorithm new] forKey:@"Identity"];
 
-			stringalgorithm=[[algorithms objectForKey:[encrypt stringForKey:@"StrF" default:@"Identity"]] retain];
-			streamalgorithm=[[algorithms objectForKey:[encrypt stringForKey:@"StmF" default:@"Identity"]] retain];
+			stringalgorithm=[algorithms objectForKey:[encrypt stringForKey:@"StrF" default:@"Identity"]];
+			streamalgorithm=[algorithms objectForKey:[encrypt stringForKey:@"StmF" default:@"Identity"]];
 		}
 
 		needspassword=![self setPassword:@""];
@@ -82,11 +82,11 @@ static const char PDFPasswordPadding[32]=
 
 -(void)dealloc
 {
-	[encrypt release];
-	[permanentid release];
-	[password release];
-	[keys release];
-	[algorithms release];
+    encrypt = nil;
+	permanentid = nil;
+	password = nil;
+	keys = nil;
+	algorithms = nil;
 	
 }
 
@@ -94,8 +94,7 @@ static const char PDFPasswordPadding[32]=
 
 -(BOOL)setPassword:(NSString *)newpassword
 {
-	[password autorelease];
-	password=[newpassword retain];
+	password=[newpassword copy];
 
 	[keys removeAllObjects];
 
@@ -276,7 +275,7 @@ static const char PDFPasswordPadding[32]=
 
 -(CSHandle *)decryptedHandle:(CSHandle *)handle reference:(PDFObjectReference *)ref
 {
-	return [[[XADRC4Handle alloc] initWithHandle:handle key:[self keyForReference:ref AES:NO]] autorelease];
+	return [[XADRC4Handle alloc] initWithHandle:handle key:[self keyForReference:ref AES:NO]];
 }
 
 @end
@@ -292,14 +291,14 @@ static const char PDFPasswordPadding[32]=
 
 	NSData *res=[handle remainingFileContents];
 
-	[handle release];
+    handle = nil;
 
 	return res;
 }
 
 -(CSHandle *)decryptedHandle:(CSHandle *)handle reference:(PDFObjectReference *)ref
 {
-	return [[[PDFAESHandle alloc] initWithHandle:handle key:[self keyForReference:ref AES:YES]] autorelease];
+	return [[PDFAESHandle alloc] initWithHandle:handle key:[self keyForReference:ref AES:YES]];
 }
 
 @end

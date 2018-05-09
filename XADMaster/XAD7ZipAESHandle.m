@@ -117,7 +117,7 @@
 {
 	if((self=[super initWithName:[handle name] length:length]))
 	{
-		parent=[handle retain];
+		parent=handle;
 		startoffs=[handle offsetInFile];
 
 		int ivlength=[ivdata length];

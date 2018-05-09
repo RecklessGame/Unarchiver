@@ -18,9 +18,9 @@ static void WordAlign(uint8_t *start,uint8_t **curr);
 {
 	if((self=[super initWithName:[handle name]]))
 	{
-		parent=[handle retain];
+		parent=handle;
 
-		files=[filesarray retain];
+		files=filesarray;
 
 		blocks=NULL;
 		maxblocks=0;
@@ -31,7 +31,7 @@ static void WordAlign(uint8_t *start,uint8_t **curr);
 -(void)dealloc
 {
 	free(blocks);
-	[parent release];
+	parent = nil;
 	
 }
 
@@ -281,12 +281,12 @@ uint8_t *destinationstart,uint8_t *destinationend,int numvalues)
 	}
 	@catch(id e)
 	{
-		[code release];
+        code = nil;
 		CSInputBufferFree(buf);
 		@throw;
 	}
 
-	[code release];
+    code = nil;
 	CSInputBufferFree(buf);
 
 	return destination-destinationstart;
@@ -453,14 +453,14 @@ uint8_t *destinationbase,uint8_t *destinationstart,uint8_t *destinationend)
 	@catch(id e)
 	{
 		CSInputBufferFree(buf);
-		[maincode release];
-		[offsetcode release];
+		maincode = nil;
+		offsetcode = nil;
 		@throw;
 	}
 
 	CSInputBufferFree(buf);
-	[maincode release];
-	[offsetcode release];
+	maincode = nil;
+	offsetcode = nil;
 
 	return destination-destinationstart;
 }

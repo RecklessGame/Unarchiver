@@ -73,8 +73,8 @@ struct xadInOut {
      by the algorithms themself using xadAllocVec(). */
 
 	// Extra fields for use by the xadIO emulation
-	CSHandle *inputhandle;
-	NSMutableData *outputdata;
+	__unsafe_unretained CSHandle *inputhandle;
+	__unsafe_unretained NSMutableData *outputdata;
 };
 
 /* setting BufferPos to buffer size activates first time read! */

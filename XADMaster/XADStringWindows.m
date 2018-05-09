@@ -43,7 +43,7 @@ static NSDictionary *DescriptionForWindowsCodePageDictionary();
 	unichar *charbuf=malloc(sizeof(unichar)*numchars);
 	MultiByteToWideChar(codepage,MB_ERR_INVALID_CHARS,bytes,length,charbuf,numchars);
 
-	return [[[NSString alloc] initWithCharactersNoCopy:charbuf length:numchars freeWhenDone:YES] autorelease];
+	return [[NSString alloc] initWithCharactersNoCopy:charbuf length:numchars freeWhenDone:YES];
 }
 
 +(NSData *)dataForString:(NSString *)string encodingName:(NSString *)encoding

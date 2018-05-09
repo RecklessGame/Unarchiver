@@ -9,7 +9,7 @@
 	if((self=[super initWithName:[parent filename]]))
 	{
 		parser=parent;
-		files=[filearray retain];
+		files=filearray;
 
 		InitializeLZSS(&lzss,0x400000);
 
@@ -27,16 +27,16 @@
 
 -(void)dealloc
 {
-	[files release];
+	files = nil;
 	CleanupLZSS(&lzss);
-	[maincode release];
-	[offsetcode release];
-	[lowoffsetcode release];
-	[lengthcode release];
+	maincode = nil;
+	offsetcode = nil;
+	lowoffsetcode = nil;
+	lengthcode = nil;;
 	FreeSubAllocatorVariantH(alloc);
-	[vm release];
-	[filtercode release];
-	[stack release];
+    vm = nil;
+	filtercode = nil;
+	stack = nil;
 	
 }
 
@@ -361,10 +361,10 @@
 
 -(void)allocAndParseCodes
 {
-	[maincode release]; maincode=nil;
-	[offsetcode release]; offsetcode=nil;
-	[lowoffsetcode release]; lowoffsetcode=nil;
-	[lengthcode release]; lengthcode=nil;
+	maincode = nil; maincode=nil;
+	offsetcode = nil; offsetcode=nil;
+	lowoffsetcode = nil; lowoffsetcode=nil;
+	lengthcode = nil;; lengthcode=nil;
 
 	CSInputSkipToByteBoundary(input);
 
@@ -455,11 +455,11 @@
 			}
 		}
 
-		[precode release];
+		precode = nil;
 	}
 	@catch(id e)
 	{
-		[precode release];
+		precode = nil;
 		@throw;
 	}
 
@@ -581,7 +581,7 @@
 		uint8_t bytecode[length];
 		for(int i=0;i<length;i++) bytecode[i]=CSInputNextBitString(filterinput,8);
 
-		code=[[[XADRARProgramCode alloc] initWithByteCode:bytecode length:length] autorelease];
+		code=[[XADRARProgramCode alloc] initWithByteCode:bytecode length:length];
 		if(!code) [XADException raiseIllegalDataException];
 
 		[filtercode addObject:code];
@@ -608,8 +608,7 @@
 	}
 
 	// Create an invocation and set register and memory parameters.
-	XADRARProgramInvocation *invocation=[[[XADRARProgramInvocation alloc]
-	initWithProgramCode:code globalData:data registers:registers] autorelease];
+    XADRARProgramInvocation *invocation=[[XADRARProgramInvocation alloc] initWithProgramCode:code globalData:data registers:registers];
 
 	for(int i=0;i<7;i++) [invocation setGlobalValueAtOffset:i*4 toValue:registers[i]];
 	[invocation setGlobalValueAtOffset:0x1c toValue:blocklength];

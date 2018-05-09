@@ -7,15 +7,14 @@
 {
 	if((self=[super initWithName:[[blockreader handle] name] length:[blockreader uncompressedLength]]))
 	{
-		blocks=[blockreader retain];
+		blocks=blockreader;
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[blocks release];
-	
+	blocks = nil;	
 }
 
 -(void)resetBlockStream

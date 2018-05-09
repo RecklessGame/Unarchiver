@@ -202,12 +202,12 @@ static NSComparisonResult OrderKeys(id first,id second,void *context);
 		[NSNumber numberWithInt:702],XADDiskLabelKey,
 		nil];
 
-	return [[dict allKeys] sortedArrayUsingFunction:OrderKeys context:ordering];
+	return [[dict allKeys] sortedArrayUsingFunction:OrderKeys context:(__bridge void *)ordering];
 }
 
 static NSComparisonResult OrderKeys(id first,id second,void *context)
 {
-	NSDictionary *ordering=context;
+	NSDictionary *ordering=(__bridge NSDictionary *)context;
 	NSNumber *firstorder=[ordering objectForKey:first];
 	NSNumber *secondorder=[ordering objectForKey:second];
 
@@ -270,7 +270,7 @@ NSString *XADShortHumanReadableFileSize(uint64_t size)
 
 static NSString *DottedNumber(uint64_t size)
 {
-	NSNumberFormatter *formatter=[[NSNumberFormatter new] autorelease];
+	NSNumberFormatter *formatter=[NSNumberFormatter new];
 	formatter.formatterBehavior=NSNumberFormatterBehavior10_4;
 	formatter.numberStyle=NSNumberFormatterDecimalStyle;
 	return [formatter stringFromNumber:[NSNumber numberWithLongLong:size]];
@@ -365,7 +365,7 @@ NSString *XADHumanReadableObject(id object)
 NSString *XADHumanReadableDate(NSDate *date)
 {
 	#ifndef __COCOTRON__
-	NSDateFormatter *formatter=[[NSDateFormatter new] autorelease];
+	NSDateFormatter *formatter=[NSDateFormatter new];
 	[formatter setFormatterBehavior:NSDateFormatterBehavior10_4];
 	[formatter setDateStyle:NSDateFormatterFullStyle];
 	[formatter setTimeStyle:NSDateFormatterMediumStyle];

@@ -744,7 +744,7 @@ static NSComparisonResult XADVolumeSort(id entry1,id entry2,void *extptr)
 {
 	NSString *str1=entry1;
 	NSString *str2=entry2;
-	NSString *firstext=(NSString *)extptr;
+	NSString *firstext=(__bridge NSString *)extptr;
 	BOOL isfirst1=firstext&&[str1 rangeOfString:firstext options:NSAnchoredSearch|NSCaseInsensitiveSearch|NSBackwardsSearch].location!=NSNotFound;
 	BOOL isfirst2=firstext&&[str2 rangeOfString:firstext options:NSAnchoredSearch|NSCaseInsensitiveSearch|NSBackwardsSearch].location!=NSNotFound;
 

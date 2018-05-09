@@ -4,7 +4,7 @@
 
 @implementation XADPNGWriter
 
-+(XADPNGWriter *)PNGWriter { return [[self new] autorelease]; }
++(XADPNGWriter *)PNGWriter { return [[self alloc] init]; }
 
 -(id)init
 {
@@ -21,7 +21,7 @@
 {
 	if(streaminited) deflateEnd(&zs);
 
-	[data release];
+    data = nil;
 	
 }
 

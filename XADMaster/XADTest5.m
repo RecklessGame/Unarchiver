@@ -222,7 +222,7 @@ CSHandle *HandleForLocators(NSArray *locators,NSString **nameptr)
 		NSString *pass=FigureOutPassword(parentname);
 		if(pass) [parser setPassword:pass];
 
-		EntryFinder *finder=[[[EntryFinder alloc] initWithLocator:locator] autorelease];
+		EntryFinder *finder=[[EntryFinder alloc] initWithLocator:locator];
 		[parser setDelegate:finder];
 
 		[parser parse];

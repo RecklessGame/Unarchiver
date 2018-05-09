@@ -10,14 +10,14 @@ static inline uint16_t rol8(uint16_t val,int n) { return (val<<n)|(val>>(8-n)); 
 {
 	if((self=[super initWithHandle:handle length:length]))
 	{
-		password=[passdata retain];
+		password=passdata;
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[password release];
+	password = nil;
 	
 }
 

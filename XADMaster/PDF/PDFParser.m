@@ -21,24 +21,24 @@ static BOOL IsDelimiter(uint8_t c);
 
 +(PDFParser *)parserWithHandle:(CSHandle *)handle
 {
-	return [[[PDFParser alloc] initWithHandle:handle] autorelease];
+	return [[PDFParser alloc] initWithHandle:handle];
 }
 
 +(PDFParser *)parserForPath:(NSString *)path
 {
 	CSFileHandle *handle=[CSFileHandle fileHandleForReadingAtPath:path];
-	return [[[PDFParser alloc] initWithHandle:handle] autorelease];
+	return [[PDFParser alloc] initWithHandle:handle];
 }
 
 -(id)initWithHandle:(CSHandle *)handle
 {
 	if(self=[super init])
 	{
-		mainhandle=[handle retain];
+		mainhandle=handle;
 		fh=nil;
 
-		objdict=[[NSMutableDictionary dictionary] retain];
-		unresolved=[[NSMutableArray array] retain];
+		objdict=[NSMutableDictionary dictionary];
+		unresolved=[NSMutableArray array];
 
 		trailerdict=nil;
 		encryption=nil;
@@ -54,19 +54,19 @@ static BOOL IsDelimiter(uint8_t c);
 			[handle readUInt8]!='D'||[handle readUInt8]!='F'||[handle readUInt8]!='-')
 			[NSException raise:PDFWrongMagicException format:@"Not a PDF file."];
 		}
-		@catch(id e) { [self release]; @throw; }
+		@catch(id e) { @throw; }
 	}
 	return self;
 }
 
 -(void)dealloc
 {
-	[mainhandle release];
-	[fh release];
-	[objdict release];
-	[unresolved release];
-	[trailerdict release];
-	[encryption release];
+    mainhandle = nil;
+    fh = nil;
+    objdict = nil;
+    unresolved = nil;
+	trailerdict = nil;
+	encryption = nil;
 	
 }
 
@@ -130,8 +130,7 @@ static BOOL IsDelimiter(uint8_t c);
 
 -(void)startParsingFromHandle:(CSHandle *)handle atOffset:(off_t)offset
 {
-	[fh autorelease];
-	fh=[handle retain];
+	fh=handle;
 	[fh seekToFileOffset:offset];
 
 	currchar=0;
@@ -189,7 +188,7 @@ static BOOL IsDelimiter(uint8_t c);
 	[mainhandle seekToEndOfFile];
 	[mainhandle skipBytes:-48];
 	NSData *enddata=[mainhandle readDataOfLength:48];
-	NSString *end=[[[NSString alloc] initWithData:enddata encoding:NSISOLatin1StringEncoding] autorelease];
+	NSString *end=[[NSString alloc] initWithData:enddata encoding:NSISOLatin1StringEncoding];
 
 	NSString *startxref=[[end substringsCapturedByPattern:@"startxref[\n\r ]+([0-9]+)[\n\r ]+%%EOF"] objectAtIndex:1];
 	if(!startxref) [NSException raise:PDFInvalidFormatException format:@"Missing PDF trailer."];
@@ -200,7 +199,7 @@ static BOOL IsDelimiter(uint8_t c);
 	[self startParsingFromHandle:mainhandle atOffset:offset];
 
 	// Read newest xrefs and trailer.
-	trailerdict=[[self parsePDFXref] retain];
+	trailerdict=[self parsePDFXref];
 
 	// Read older xrefs, ignoring their trailers.
 	NSNumber *prev=[trailerdict objectForKey:@"Prev"];
@@ -420,7 +419,7 @@ static BOOL IsDelimiter(uint8_t c);
 	encryption=[[PDFEncryptionHandler alloc]
 	initWithEncryptDictionary:encryptdict permanentID:permanentid];
 
-	if([encryption needsPassword] && passwordaction)
+	if([encryption needsPassword] && passwordtarget && passwordaction)
 	{
 		[passwordtarget performSelector:passwordaction withObject:self];
 	}
@@ -476,8 +475,8 @@ static BOOL IsDelimiter(uint8_t c);
 
 			if(![value isKindOfClass:[NSDictionary class]]) [self _raiseParserException:@"Error parsing stream object"];
 
-			return [[[PDFStream alloc] initWithDictionary:value fileHandle:mainhandle
-			offset:[self parserFileOffset] reference:ref parser:self] autorelease];
+            return [[PDFStream alloc] initWithDictionary:value fileHandle:mainhandle
+                                                  offset:[self parserFileOffset] reference:ref parser:self];
 		break;
 
 		case 'e':
@@ -744,7 +743,7 @@ static BOOL IsDelimiter(uint8_t c);
 				if(--nesting==0)
 				{
 					[self proceed];
-					return [[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
+					return [[PDFString alloc] initWithData:data parent:parent parser:self];
 				}
 				else
 				{
@@ -805,7 +804,7 @@ static BOOL IsDelimiter(uint8_t c);
 		int c1=currchar;
 		[self proceed];
 
-		if(c1=='>') return [[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
+		if(c1=='>') return [[PDFString alloc] initWithData:data parent:parent parser:self];
 
 		[self skipWhitespace];
 		if(!IsHexDigit(currchar) && currchar!='>') [self _raiseParserException:@"Error parsing hex data value"];
@@ -815,7 +814,7 @@ static BOOL IsDelimiter(uint8_t c);
 		uint8_t byte=HexDigit(c1)*16+HexDigit(c2);
 		[data appendBytes:&byte length:1];
 
-		if(c2=='>') return [[[PDFString alloc] initWithData:data parent:parent parser:self] autorelease];
+		if(c2=='>') return [[PDFString alloc] initWithData:data parent:parent parser:self];
 	}
 }
 
@@ -971,13 +970,13 @@ static BOOL IsDelimiter(uint8_t c);
 	const uint8_t *bytes=[start bytes];
 	int skip=0;
 	for(int i=0;i<length;i++) if(bytes[i]=='\n'||bytes[i]=='\r') skip=i+1;
-	NSString *startstr=[[[NSString alloc] initWithBytes:bytes+skip length:length-skip encoding:NSISOLatin1StringEncoding] autorelease];
+	NSString *startstr=[[NSString alloc] initWithBytes:bytes+skip length:length-skip encoding:NSISOLatin1StringEncoding];
 
 	NSData *end=[fh readDataOfLengthAtMost:100];
 	length=[end length];
 	bytes=[end bytes];
 	for(int i=0;i<length;i++) if(bytes[i]=='\n'||bytes[i]=='\r') { length=i; break; }
-	NSString *endstr=[[[NSString alloc] initWithBytes:bytes length:length encoding:NSISOLatin1StringEncoding] autorelease];
+	NSString *endstr=[[NSString alloc] initWithBytes:bytes length:length encoding:NSISOLatin1StringEncoding];
 
 	[NSException raise:PDFParserException format:@"%@: \"%@%C%@\"",error,startstr,(unichar)0x25bc,endstr];
 }
@@ -992,8 +991,8 @@ static BOOL IsDelimiter(uint8_t c);
 {
 	if(self=[super init])
 	{
-		data=[bytes retain];
-		ref=[parent retain];
+		data=bytes;
+		ref=parent;
 		parser=owner;
 	}
 	return self;
@@ -1001,8 +1000,8 @@ static BOOL IsDelimiter(uint8_t c);
 
 -(void)dealloc
 {
-	[data release];
-	[ref release];
+    data = nil;
+    ref = nil;
 	
 }
 
@@ -1036,7 +1035,7 @@ static BOOL IsDelimiter(uint8_t c);
 	}
 	else
 	{
-		return [[[NSString alloc] initWithData:characters encoding:NSISOLatin1StringEncoding] autorelease];
+		return [[NSString alloc] initWithData:characters encoding:NSISOLatin1StringEncoding];
 	}
 }
 
@@ -1066,12 +1065,12 @@ static BOOL IsDelimiter(uint8_t c);
 
 +(PDFObjectReference *)referenceWithNumber:(int)objnum generation:(int)objgen
 {
-	return [[[[self class] alloc] initWithNumber:objnum generation:objgen] autorelease];
+	return [[[self class] alloc] initWithNumber:objnum generation:objgen];
 }
 
 +(PDFObjectReference *)referenceWithNumberObject:(NSNumber *)objnum generationObject:(NSNumber *)objgen
 {
-	return [[[[self class] alloc] initWithNumber:[objnum intValue] generation:[objgen intValue]] autorelease];
+	return [[[self class] alloc] initWithNumber:[objnum intValue] generation:[objgen intValue]];
 }
 
 -(id)initWithNumber:(int)objnum generation:(int)objgen

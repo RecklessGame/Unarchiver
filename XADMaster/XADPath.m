@@ -19,7 +19,7 @@ static BOOL IsDataASCIIOrSeparator(NSData *data,const char *separators);
 +(XADPath *)pathWithString:(NSString *)string
 {
 	/*if([string isEqual:@"."]) return [XADPath emptyPath];
-	else*/ return [[[XADStringPath alloc] initWithComponentString:string] autorelease];
+	else*/ return [[XADStringPath alloc] initWithComponentString:string];
 }
 
 +(XADPath *)pathWithStringComponents:(NSArray *)components
@@ -33,7 +33,7 @@ static BOOL IsDataASCIIOrSeparator(NSData *data,const char *separators);
 
 		//if(i==0 && [component isEqual:@"."]) continue; // Skip leading . paths.
 
-		XADPath *path=[[[XADStringPath alloc] initWithComponentString:component parent:lastpath] autorelease];
+		XADPath *path=[[XADStringPath alloc] initWithComponentString:component parent:lastpath];
 		lastpath=path;
 	}
 
@@ -54,7 +54,7 @@ static BOOL IsDataASCIIOrSeparator(NSData *data,const char *separators);
 
 		//if(i==0 && [component isEqual:@"."]) continue; // Skip leading . paths.
 
-		XADPath *path=[[[XADStringPath alloc] initWithComponentString:component parent:lastpath] autorelease];
+		XADPath *path=[[XADStringPath alloc] initWithComponentString:component parent:lastpath];
 		lastpath=path;
 	}
 
@@ -75,7 +75,7 @@ static BOOL IsDataASCIIOrSeparator(NSData *data,const char *separators);
 
 		//if(start==0 && [component isEqual:@"."]) continue; // Skip leading . paths.
 
-		XADPath *path=[[[XADStringPath alloc] initWithComponentString:component parent:lastpath] autorelease];
+		XADPath *path=[[XADStringPath alloc] initWithComponentString:component parent:lastpath];
 		lastpath=path;
 	}
 
@@ -108,11 +108,11 @@ separators:(const char *)pathseparators
 				if(start==length) return [XADPath emptyPath];
 
 				NSData *subdata=[bytedata subdataWithRange:NSMakeRange(start,length-start)];
-				return [[[XADRawPath alloc] initWithData:subdata source:stringsource separators:pathseparators] autorelease];
+				return [[XADRawPath alloc] initWithData:subdata source:stringsource separators:pathseparators];
 			}
 		}*/
 
-		return [[[XADRawPath alloc] initWithData:bytedata source:stringsource separators:pathseparators] autorelease];
+		return [[XADRawPath alloc] initWithData:bytedata source:stringsource separators:pathseparators];
 	}
 }
 
@@ -135,7 +135,7 @@ separators:(const char *)pathseparators
 	if((self=[super init]))
 	{
 		if(!parentpath || [parentpath isEmpty]) parent=nil;
-		else parent=[parentpath retain];
+		else parent=parentpath;
 
 		cachedcanonicalcomponents=nil;
 		cachedencoding=nil;
@@ -150,9 +150,9 @@ separators:(const char *)pathseparators
 
 -(void)dealloc
 {
-	[parent release];
-	[cachedcanonicalcomponents release];
-	[cachedencoding release];
+	parent = nil;
+	cachedcanonicalcomponents = nil;
+	cachedencoding = nil;
 	
 }
 
@@ -292,7 +292,7 @@ separators:(const char *)pathseparators
 	}
 
 	cachedcanonicalcomponents=[[NSArray alloc] initWithArray:components];
-	cachedencoding=[encoding retain];
+	cachedencoding=encoding;
 
 	return cachedcanonicalcomponents;
 }
@@ -362,8 +362,8 @@ separators:(const char *)pathseparators
 	if(parent)
 	{
 		XADPath *newparent=[parent pathByDeletingFirstPathComponentWithEncodingName:encoding]; 
-		if(![newparent isEmpty]) return [[self _copyWithParent:newparent] autorelease];
-		else return [[self _copyWithParent:nil] autorelease];
+		if(![newparent isEmpty]) return [self _copyWithParent:newparent];
+		else return [self _copyWithParent:nil];
 	}
 	else
 	{
@@ -381,12 +381,12 @@ separators:(const char *)pathseparators
 {
 	if([component source])
 	{
-		return [[[XADRawPath alloc] initWithData:[component data]
-		source:[component source] separators:XADNoPathSeparator parent:self] autorelease];
+        return [[XADRawPath alloc] initWithData:[component data]
+                                         source:[component source] separators:XADNoPathSeparator parent:self];
 	}
 	else
 	{
-		return [[[XADStringPath alloc] initWithComponentString:[component string] parent:self] autorelease];
+		return [[XADStringPath alloc] initWithComponentString:[component string] parent:self];
 	}
 }
 
@@ -395,7 +395,7 @@ separators:(const char *)pathseparators
 	if(path && ![path isEmpty])
 	{
 		XADPath *appended=[self pathByAppendingPath:path->parent];
-		return [[path _copyWithParent:appended] autorelease];
+		return [path _copyWithParent:appended];
 	}
 	else
 	{
@@ -592,7 +592,7 @@ separators:(const char *)pathseparators
 	return 0;
 }
 
--(id)copyWithZone:(NSZone *)zone { return [self retain]; } // Class is immutable, so just return self.
+-(id)copyWithZone:(NSZone *)zone { return [self copy]; } // Class is immutable, so just return self.
 
 
 
@@ -622,7 +622,7 @@ separators:(const char *)pathseparators
 	for(int i=first;i<count;i++)
 	{
 		NSString *component=[components objectAtIndex:i];
-		XADPath *path=[[[XADStringPath alloc] initWithComponentString:component parent:lastpath] autorelease];
+		XADPath *path=[[XADStringPath alloc] initWithComponentString:component parent:lastpath];
 		lastpath=path;
 	}
 
@@ -655,7 +655,7 @@ separators:(const char *)pathseparators
 {
 	if((self=[super init]))
 	{
-		string=[pathstring retain];
+		string=[pathstring copy];
 	}
 	return self;
 }
@@ -664,7 +664,7 @@ separators:(const char *)pathseparators
 {
 	if((self=[super initWithParent:parentpath]))
 	{
-		string=[pathstring retain];
+		string=[pathstring copy];
 	}
 	return self;
 }
@@ -676,7 +676,7 @@ separators:(const char *)pathseparators
 
 -(void)dealloc
 {
-	[string release];
+    string = nil;
 	
 }
 
@@ -760,8 +760,8 @@ separators:(const char *)pathseparators
 {
 	if((self=[super init]))
 	{
-		data=[bytedata retain];
-		source=[stringsource retain];
+		data=bytedata;
+		source=stringsource;
 		separators=pathseparators;
 	}
 	return self;
@@ -772,8 +772,8 @@ separators:(const char *)pathseparators parent:(XADPath *)parentpath
 {
 	if((self=[super initWithParent:parentpath]))
 	{
-		data=[bytedata retain];
-		source=[stringsource retain];
+		data=bytedata;
+		source=stringsource;
 		separators=pathseparators;
 	}
 	return self;
@@ -787,9 +787,8 @@ separators:(const char *)pathseparators parent:(XADPath *)parentpath
 
 -(void)dealloc
 {
-	[data release];
-	[source release];
-	
+	data = nil;
+	source = nil;
 }
 
 
@@ -877,8 +876,8 @@ separators:(const char *)pathseparators parent:(XADPath *)parentpath
 	while(start>earliest && IsSeparator(bytes[start-1],separators)) start--;
 	if(start==0) return nil;
 
-	return [[[XADRawPath alloc] initWithData:[data subdataWithRange:NSMakeRange(0,start)]
-	source:source separators:separators parent:parent] autorelease];
+    return [[XADRawPath alloc] initWithData:[data subdataWithRange:NSMakeRange(0,start)]
+                                     source:source separators:separators parent:parent];
 }
 
 -(XADPath *)_pathByDeletingFirstPathComponentOfPartWithEncodingName:(NSString *)encoding
@@ -892,8 +891,8 @@ separators:(const char *)pathseparators parent:(XADPath *)parentpath
 	while(end<length && IsSeparator(bytes[end],separators)) end++;
 	if(end==length) return nil;
 
-	return [[[XADRawPath alloc] initWithData:[data subdataWithRange:NSMakeRange(end,length-end)]
-	source:source separators:separators parent:parent] autorelease];
+    return [[XADRawPath alloc] initWithData:[data subdataWithRange:NSMakeRange(end,length-end)]
+                                     source:source separators:separators parent:parent];
 }
 
 -(BOOL)_canDecodePartWithEncodingName:(NSString *)encoding

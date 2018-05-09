@@ -56,7 +56,7 @@
 	CFStringEncoding cfenc=[XADString CFStringEncodingForEncodingName:encoding];
 	if(cfenc==kCFStringEncodingInvalidId) return nil;
 	CFStringRef str=CFStringCreateWithBytes(kCFAllocatorDefault,bytes,length,cfenc,false);
-	return [(id)str autorelease];
+	return (__bridge NSString *)str;
 }
 
 +(NSData *)dataForString:(NSString *)string encodingName:(NSString *)encoding

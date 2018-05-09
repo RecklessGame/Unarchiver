@@ -10,7 +10,7 @@
 +(XADResourceFork *)resourceForkWithHandle:(CSHandle *)handle
 {
 	if(!handle) return nil;
-	XADResourceFork *fork=[[self new] autorelease];
+	XADResourceFork *fork=[self new];
 	[fork parseFromHandle:handle];
 	return fork;
 }
@@ -33,7 +33,7 @@
 
 -(void)dealloc
 {
-	[resources release];
+	resources = nil;
 	
 }
 
@@ -55,8 +55,7 @@
 	NSData *mapdata=[handle readDataOfLength:(int)maplength];
 	CSHandle *maphandle=[CSMemoryHandle memoryHandleForReadingData:mapdata];
 
-	[resources release];
-	resources=[[self _parseMapFromHandle:maphandle withDataObjects:dataobjects] retain];
+	resources=[self _parseMapFromHandle:maphandle withDataObjects:dataobjects];
 }
 
 -(NSData *)resourceDataForType:(uint32_t)type identifier:(int)identifier

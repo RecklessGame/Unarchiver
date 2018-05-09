@@ -85,9 +85,8 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 -(void)dealloc
 {
-	[headerkey release];
-	[cryptocache release];
-	
+    headerkey = nil;
+    cryptocache = nil;
 }
 
 -(void)parse
@@ -220,8 +219,8 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 					//uint32_t extracrc=[handle readUInt32LE];
 				}
 
-				headerkey=[[self encryptionKeyForPassword:[self password]
-				salt:salt strength:strength passwordCheck:passcheck] retain];
+                headerkey=[self encryptionKeyForPassword:[self password]
+                                                    salt:salt strength:strength passwordCheck:passcheck];
 
 				[self skipBlock:block];
 			}
@@ -234,7 +233,6 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 				{
 					[[self currentHandle] seekToEndOfFile];
 					[[self handle] skipBytes:8];
-					[headerkey release];
 					headerkey=nil;
 				}
 				else
@@ -535,7 +533,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 	{
 		NSData *iv=[fh readDataOfLength:16];
 		block.outerstart=[fh offsetInFile];
-		fh=[[[XADRARAESHandle alloc] initWithHandle:fh RAR5Key:headerkey IV:iv] autorelease];
+		fh=[[XADRARAESHandle alloc] initWithHandle:fh RAR5Key:headerkey IV:iv];
 	}
 
 	block.fh=fh;
@@ -672,7 +670,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 				NSData *key=[self hashKeyForPassword:[self password]
 				salt:salt strength:strength.intValue passwordCheck:passcheck];
 
-				[crchandle setCRCTransformationFunction:EncryptRAR5CRC32 context:key];
+				[crchandle setCRCTransformationFunction:EncryptRAR5CRC32 context:(__bridge void *)key];
 			}
 
 			handle=crchandle;
@@ -691,7 +689,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 -(CSHandle *)inputHandleWithWithDictionary:(NSDictionary *)dict parts:(NSArray *)parts
 {
-	CSHandle *handle=[[[XADRARInputHandle alloc] initWithHandle:[self handle] parts:parts] autorelease];
+	CSHandle *handle=[[XADRARInputHandle alloc] initWithHandle:[self handle] parts:parts];
 
 	NSNumber *encryptnum=[dict objectForKey:XADIsEncryptedKey];
 	if(encryptnum && [encryptnum boolValue])
@@ -704,8 +702,10 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 		NSData *key=[self encryptionKeyForPassword:[self password]
 		salt:salt strength:strength.intValue passwordCheck:passcheck];
 
-		return [[[XADRARAESHandle alloc] initWithHandle:handle
-		length:[handle fileSize] RAR5Key:key IV:iv] autorelease];
+        return [[XADRARAESHandle alloc] initWithHandle:handle
+                                                length:[handle fileSize]
+                                               RAR5Key:key
+                                                    IV:iv];
 	}
 	else
 	{
@@ -733,7 +733,7 @@ static inline BOOL IsZeroBlock(RAR5Block block) { return block.start==0; }
 
 static uint32_t EncryptRAR5CRC32(uint32_t crc,void *context)
 {
-	NSData *key=context;
+	NSData *key=(__bridge NSData *)context;
 
 	uint8_t crcbytes[4];
 	CSSetUInt32LE(crcbytes,crc^0xffffffff);
